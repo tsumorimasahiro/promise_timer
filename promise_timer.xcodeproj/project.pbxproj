@@ -11,7 +11,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		C7B1E87D2F66C86200B47628 /* promise_timer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = promise_timer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C7DD783A2F7AB3120065AF50 /* promise_timer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = promise_timer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -34,28 +34,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		C77DDFEA2F6ECDFF00DB748E /* Subscription */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Subscription;
-			sourceTree = "<group>";
-		};
 		C7B1E8742F66C86200B47628 = {
 			isa = PBXGroup;
 			children = (
 				C7B1E87F2F66C86200B47628 /* promise_timer */,
-				C7B1E87E2F66C86200B47628 /* Products */,
-				C77DDFEA2F6ECDFF00DB748E /* Subscription */,
+				C7DD783A2F7AB3120065AF50 /* promise_timer.app */,
 			);
-			sourceTree = "<group>";
-		};
-		C7B1E87E2F66C86200B47628 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				C7B1E87D2F66C86200B47628 /* promise_timer.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -81,7 +65,7 @@
 				E8A1F9023C8B4B2200A10001 /* GoogleMobileAds */,
 			);
 			productName = promise_timer;
-			productReference = C7B1E87D2F66C86200B47628 /* promise_timer.app */;
+			productReference = C7DD783A2F7AB3120065AF50 /* promise_timer.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -112,7 +96,7 @@
 				E8A1F9033C8B4B2200A10001 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 			);
 			preferredProjectObjectVersion = 77;
-			productRefGroup = C7B1E87E2F66C86200B47628 /* Products */;
+			productRefGroup = C7B1E8742F66C86200B47628;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -272,14 +256,14 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = AppInfo.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "1分できた";
+				INFOPLIST_KEY_CFBundleDisplayName = "1 minute";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.01;
 				PRODUCT_BUNDLE_IDENTIFIER = "max.promise-timer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -303,14 +287,14 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = AppInfo.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "1分できた";
+				INFOPLIST_KEY_CFBundleDisplayName = "1 minute";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.01;
 				PRODUCT_BUNDLE_IDENTIFIER = "max.promise-timer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;

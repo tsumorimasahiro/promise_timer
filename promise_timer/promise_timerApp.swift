@@ -6,9 +6,14 @@
 //
 
 import SwiftUI
+import GoogleMobileAds
 
 @main
 struct promise_timerApp: App {
+    init() {
+        MobileAds.shared.start(completionHandler: nil)
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()

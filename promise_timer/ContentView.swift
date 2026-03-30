@@ -9,6 +9,7 @@ import SwiftUI
 import AudioToolbox
 import Combine
 import StoreKit
+import AppTrackingTransparency
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -64,13 +65,22 @@ fileprivate struct HabitPreset: Identifiable, Codable, Hashable {
     let minutes: Int?
     let iconName: String
     let tintName: PresetTint
+    let isWriting: Bool
 
-    init(id: String = UUID().uuidString, title: String, minutes: Int?, iconName: String, tintName: PresetTint) {
+    init(
+        id: String = UUID().uuidString,
+        title: String,
+        minutes: Int?,
+        iconName: String,
+        tintName: PresetTint,
+        isWriting: Bool = false
+    ) {
         self.id = id
         self.title = title
         self.minutes = minutes
         self.iconName = iconName
         self.tintName = tintName
+        self.isWriting = isWriting
     }
 
     var tint: Color {
@@ -80,6 +90,25 @@ fileprivate struct HabitPreset: Identifiable, Codable, Hashable {
     var durationLabel: String {
         guard let minutes else { return "記録だけ" }
         return "\(minutes)分"
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case title
+        case minutes
+        case iconName
+        case tintName
+        case isWriting
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        title = try container.decode(String.self, forKey: .title)
+        minutes = try container.decodeIfPresent(Int.self, forKey: .minutes)
+        iconName = try container.decode(String.self, forKey: .iconName)
+        tintName = try container.decode(PresetTint.self, forKey: .tintName)
+        isWriting = try container.decodeIfPresent(Bool.self, forKey: .isWriting) ?? false
     }
 }
 
@@ -128,9 +157,62 @@ fileprivate struct HabitLog: Identifiable, Codable, Hashable {
 }
 
 fileprivate let defaultPresets: [HabitPreset] = [
-    HabitPreset(id: "study", title: "勉強", minutes: 10, iconName: "pencil.and.scribble", tintName: .sunshine),
-    HabitPreset(id: "reading", title: "読書", minutes: 5, iconName: "book.fill", tintName: .lavender),
+    HabitPreset(id: "stretch", title: "ストレッチ", minutes: 1, iconName: "figure.run", tintName: .mintGreen),
+    HabitPreset(id: "tidy", title: "片づけ", minutes: 1, iconName: "checkmark.circle.fill", tintName: .sunshine),
     HabitPreset(id: "bath", title: "お風呂", minutes: nil, iconName: "drop.fill", tintName: .peach)
+]
+
+fileprivate struct InitialPresetGroup: Identifiable, Hashable {
+    let id: String
+    let title: String
+    let presets: [HabitPreset]
+
+    var previewText: String {
+        presets.map { $0.title }.joined(separator: "、")
+    }
+}
+
+fileprivate let initialPresetGroups: [InitialPresetGroup] = [
+    InitialPresetGroup(
+        id: "lighten",
+        title: "心を軽くしたい",
+        presets: [
+            HabitPreset(id: "meditation", title: "瞑想", minutes: 1, iconName: "sparkles", tintName: .lavender),
+            HabitPreset(id: "breathing", title: "深呼吸", minutes: 1, iconName: "wind", tintName: .mintGreen),
+            HabitPreset(id: "good-things", title: "よかったこと書く", minutes: 1, iconName: "pencil.and.scribble", tintName: .sunshine, isWriting: true),
+            HabitPreset(id: "gratitude", title: "感謝を書く", minutes: 1, iconName: "heart.fill", tintName: .peach, isWriting: true)
+        ]
+    ),
+    InitialPresetGroup(
+        id: "organize",
+        title: "生活を整えたい",
+        presets: [
+            HabitPreset(id: "tidy-room", title: "片付ける", minutes: 1, iconName: "checkmark.circle.fill", tintName: .sunshine),
+            HabitPreset(id: "clean", title: "掃除する", minutes: 1, iconName: "sparkles", tintName: .mintGreen),
+            HabitPreset(id: "bath-time", title: "お風呂入る", minutes: nil, iconName: "drop.fill", tintName: .peach),
+            HabitPreset(id: "journal", title: "日記書く", minutes: 1, iconName: "book.fill", tintName: .lavender, isWriting: true)
+        ]
+    ),
+    InitialPresetGroup(
+        id: "grow",
+        title: "成長したい",
+        presets: [
+            HabitPreset(id: "goal", title: "今日の目標を書く", minutes: 1, iconName: "square.and.pencil", tintName: .sunshine, isWriting: true),
+            HabitPreset(id: "reading", title: "読書", minutes: 1, iconName: "book.fill", tintName: .lavender),
+            HabitPreset(id: "study", title: "勉強", minutes: 1, iconName: "pencil.and.scribble", tintName: .sunshine),
+            HabitPreset(id: "review", title: "振り返りを書く", minutes: 1, iconName: "square.and.pencil", tintName: .candyBlue, isWriting: true)
+        ]
+    ),
+    InitialPresetGroup(
+        id: "body",
+        title: "体を変えたい",
+        presets: [
+            HabitPreset(id: "stretching", title: "ストレッチ", minutes: 1, iconName: "figure.run", tintName: .mintGreen),
+            HabitPreset(id: "exercise", title: "運動", minutes: 1, iconName: "figure.walk", tintName: .candyBlue),
+            HabitPreset(id: "bath", title: "お風呂に入る", minutes: nil, iconName: "drop.fill", tintName: .peach),
+            HabitPreset(id: "meal-log", title: "食事を記録する", minutes: 1, iconName: "fork.knife", tintName: .sunshine, isWriting: true)
+        ]
+    )
 ]
 
 fileprivate let presetIcons: [String] = [
@@ -138,12 +220,17 @@ fileprivate let presetIcons: [String] = [
     "pencil.and.scribble",
     "book.fill",
     "figure.run",
+    "figure.walk",
     "checkmark.circle.fill",
     "cup.and.saucer.fill",
     "music.note",
     "sparkles",
     "leaf.fill",
-    "moon.stars.fill"
+    "moon.stars.fill",
+    "wind",
+    "heart.fill",
+    "fork.knife",
+    "square.and.pencil"
 ]
 
 extension Color {
@@ -170,6 +257,9 @@ struct ContentView: View {
     @AppStorage("reviewActionCount") private var reviewActionCount: Int = 0
     @AppStorage("reviewFirstUseTime") private var reviewFirstUseTime: Double = 0
     @AppStorage("reviewLastRequestTime") private var reviewLastRequestTime: Double = 0
+    @AppStorage("didRequestATT") private var didRequestATT: Bool = false
+    @AppStorage("didSelectInitialPresets") private var didSelectInitialPresets: Bool = false
+    @AppStorage("dailyNotesStore") private var dailyNotesStorage: String = ""
 
     @StateObject private var subscriptionManager = SubscriptionManager()
     @State private var habitPresets: [HabitPreset] = defaultPresets
@@ -190,8 +280,14 @@ struct ContentView: View {
     @State private var draftPresetTracksTime = true
     @State private var draftPresetIconName = presetIcons[0]
     @State private var draftPresetTint: PresetTint = .peach
+    @State private var draftPresetIsWriting = false
     @State private var showingPaywall = false
     @State private var showingAddLogSheet = false
+    @State private var showingInitialPresetPicker = false
+    @State private var showingNoteSheet = false
+    @State private var noteDraft = ""
+    @State private var noteDate = Date()
+    @State private var notePreset: HabitPreset?
 
     private let tick = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     private let calendar = Calendar(identifier: .gregorian)
@@ -249,6 +345,10 @@ struct ContentView: View {
                         )
 
                     }
+
+                    if !isSubscribed {
+                        AdMobMRECView(adUnitID: "ca-app-pub-4731680416753736/7227046727")
+                    }
                 }
                 .padding(14)
                 .background(Color.cream.opacity(0.94), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
@@ -278,10 +378,16 @@ struct ContentView: View {
                     DayLogListCard(
                         date: selectedLogDate,
                         logs: logs(for: selectedLogDate),
+                        noteText: noteText(for: selectedLogDate),
                         canAdd: canAddLog(for: selectedLogDate),
                         onAdd: { showingAddLogSheet = true },
+                        onNote: { openNote(for: selectedLogDate, preset: nil) },
                         onDelete: deleteLog(_:)
                     )
+
+                    if !isSubscribed {
+                        AdMobMRECView(adUnitID: "ca-app-pub-4731680416753736/7227046727")
+                    }
 
                 }
                 .padding(14)
@@ -306,6 +412,11 @@ struct ContentView: View {
         }
         .onAppear {
             loadPresets()
+            if habitPresetsStorage.isEmpty {
+                showingInitialPresetPicker = !didSelectInitialPresets
+            } else {
+                didSelectInitialPresets = true
+            }
             if let preset = selectedPreset {
                 syncTimer(for: preset)
             }
@@ -319,6 +430,7 @@ struct ContentView: View {
         .task {
             await subscriptionManager.start()
             isSubscribed = subscriptionManager.isSubscribed
+            await requestTrackingAuthorizationIfNeeded()
         }
         .onChange(of: subscriptionManager.isSubscribed) { newValue in
             isSubscribed = newValue
@@ -330,8 +442,9 @@ struct ContentView: View {
                 tracksTime: $draftPresetTracksTime,
                 iconName: $draftPresetIconName,
                 tint: $draftPresetTint,
+                isWriting: $draftPresetIsWriting,
                 isEditing: editingPreset != nil,
-                canDelete: editingPreset != nil && habitPresets.count > 1,
+                canDelete: editingPreset != nil,
                 onSave: savePreset,
                 onDelete: deletePreset,
                 onCancel: {
@@ -349,6 +462,38 @@ struct ContentView: View {
                 },
                 onCancel: { showingAddLogSheet = false }
             )
+        }
+        .fullScreenCover(isPresented: $showingInitialPresetPicker) {
+            InitialPresetPickerSheet(
+                groups: initialPresetGroups,
+                onSelect: { group in
+                    habitPresets = group.presets
+                    if let first = group.presets.first {
+                        selectedPresetID = first.id
+                    }
+                    persistPresets()
+                    didSelectInitialPresets = true
+                    showingInitialPresetPicker = false
+                }
+            )
+            .interactiveDismissDisabled(true)
+        }
+        .sheet(isPresented: $showingNoteSheet) {
+            DailyNoteSheet(
+                date: noteDate,
+                presetTitle: notePreset?.title,
+                remainingSeconds: noteTimerRemainingSeconds,
+                totalSeconds: noteTimerTotalSeconds,
+                isRunning: timerRunning,
+                text: $noteDraft,
+                onClose: {
+                    showingNoteSheet = false
+                }
+            )
+            .onDisappear {
+                saveNote(noteDraft, for: noteDate)
+                notePreset = nil
+            }
         }
         .onReceive(tick) { _ in
             guard timerRunning else { return }
@@ -386,6 +531,25 @@ struct ContentView: View {
         .ignoresSafeArea()
     }
 
+    private func requestTrackingAuthorizationIfNeeded() async {
+        guard !didRequestATT else { return }
+        if #available(iOS 14, *) {
+            let status = ATTrackingManager.trackingAuthorizationStatus
+            guard status == .notDetermined else {
+                didRequestATT = true
+                return
+            }
+            await withCheckedContinuation { continuation in
+                ATTrackingManager.requestTrackingAuthorization { _ in
+                    didRequestATT = true
+                    continuation.resume()
+                }
+            }
+        } else {
+            didRequestATT = true
+        }
+    }
+
     private var selectedPreset: HabitPreset? {
         habitPresets.first(where: { $0.id == selectedPresetID })
     }
@@ -399,6 +563,22 @@ struct ContentView: View {
 
     private var logsByDay: [String: [HabitLog]] {
         Dictionary(grouping: logs) { ymdFormatter.string(from: $0.completedAt) }
+    }
+
+    private var dailyNotes: [String: String] {
+        guard let data = dailyNotesStorage.data(using: .utf8) else { return [:] }
+        let decoder = JSONDecoder()
+        return (try? decoder.decode([String: String].self, from: data)) ?? [:]
+    }
+
+    private var noteTimerRemainingSeconds: Int? {
+        guard let preset = notePreset, preset.minutes != nil else { return nil }
+        return remainingSeconds
+    }
+
+    private var noteTimerTotalSeconds: Int? {
+        guard let preset = notePreset, let minutes = preset.minutes else { return nil }
+        return max(minutes * 60, 1)
     }
 
     private var activeDayCount: Int {
@@ -439,6 +619,9 @@ struct ContentView: View {
             if preset.minutes == nil {
                 Button {
                     playButtonTapSound()
+                    if preset.isWriting {
+                        openNote(for: Date(), preset: preset)
+                    }
                     logCompletion(for: preset)
                 } label: {
                     Text("できた")
@@ -548,6 +731,7 @@ struct ContentView: View {
         draftPresetTracksTime = true
         draftPresetIconName = presetIcons[0]
         draftPresetTint = .peach
+        draftPresetIsWriting = false
         showingPresetEditor = true
     }
 
@@ -558,6 +742,7 @@ struct ContentView: View {
         draftPresetTracksTime = preset.minutes != nil
         draftPresetIconName = preset.iconName
         draftPresetTint = preset.tintName
+        draftPresetIsWriting = preset.isWriting
         showingPresetEditor = true
     }
 
@@ -571,7 +756,8 @@ struct ContentView: View {
             title: title,
             minutes: minutes,
             iconName: draftPresetIconName,
-            tintName: draftPresetTint
+            tintName: draftPresetTint,
+            isWriting: draftPresetIsWriting
         )
 
         if let editingPreset,
@@ -589,8 +775,15 @@ struct ContentView: View {
 
     private func deletePreset() {
         guard let editingPreset else { return }
-        guard habitPresets.count > 1 else { return }
         habitPresets.removeAll { $0.id == editingPreset.id }
+        if habitPresets.isEmpty {
+            habitPresetsStorage = ""
+            didSelectInitialPresets = false
+            selectedPresetID = ""
+            showingPresetEditor = false
+            showingInitialPresetPicker = true
+            return
+        }
         persistPresets()
 
         if selectedPresetID == editingPreset.id, let replacement = habitPresets.first {
@@ -610,6 +803,9 @@ struct ContentView: View {
         showHanamaru = false
         remainingSeconds = minutes * 60
         timerRunning = true
+        if preset.isWriting {
+            openNote(for: Date(), preset: preset)
+        }
     }
 
     private func cancelTimer() {
@@ -729,14 +925,14 @@ struct ContentView: View {
 
     private func loadPresets() {
         guard let data = habitPresetsStorage.data(using: .utf8) else {
-            habitPresets = defaultPresets
+            habitPresets = didSelectInitialPresets ? defaultPresets : []
             return
         }
         let decoder = JSONDecoder()
         if let items = try? decoder.decode([HabitPreset].self, from: data), !items.isEmpty {
             habitPresets = Array(items.prefix(4))
         } else {
-            habitPresets = defaultPresets
+            habitPresets = didSelectInitialPresets ? defaultPresets : []
         }
 
         if !habitPresets.contains(where: { $0.id == selectedPresetID }), let first = habitPresets.first {
@@ -745,10 +941,42 @@ struct ContentView: View {
     }
 
     private func persistPresets() {
+        guard !habitPresets.isEmpty else {
+            habitPresetsStorage = ""
+            return
+        }
         let encoder = JSONEncoder()
         guard let data = try? encoder.encode(habitPresets),
               let string = String(data: data, encoding: .utf8) else { return }
         habitPresetsStorage = string
+    }
+
+    private func noteText(for date: Date) -> String {
+        let key = ymdFormatter.string(from: date)
+        return dailyNotes[key] ?? ""
+    }
+
+    private func saveNote(_ text: String, for date: Date) {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let key = ymdFormatter.string(from: date)
+        var notes = dailyNotes
+        if trimmed.isEmpty {
+            notes.removeValue(forKey: key)
+        } else {
+            notes[key] = text
+        }
+
+        let encoder = JSONEncoder()
+        guard let data = try? encoder.encode(notes),
+              let string = String(data: data, encoding: .utf8) else { return }
+        dailyNotesStorage = string
+    }
+
+    private func openNote(for date: Date, preset: HabitPreset?) {
+        noteDate = date
+        notePreset = preset
+        noteDraft = noteText(for: date)
+        showingNoteSheet = true
     }
 
     private func deleteLog(_ log: HabitLog) {
@@ -891,35 +1119,34 @@ private struct PresetGridView: View {
     var body: some View {
         LazyVGrid(columns: columns, spacing: 10) {
             ForEach(presets) { preset in
-                ZStack(alignment: .topTrailing) {
-                    Button {
-                        if !disabled { onSelect(preset) }
-                    } label: {
-                        VStack(spacing: 12) {
-                            Spacer(minLength: 0)
-                            Image(systemName: preset.iconName)
-                                .font(.system(size: 40, weight: .bold))
-                            VStack(spacing: 4) {
-                                Text(preset.title)
-                                    .font(.headline)
-                                Text(preset.durationLabel)
-                                    .font(.subheadline.bold())
-                            }
-                            Spacer(minLength: 0)
+                Button {
+                    if !disabled { onSelect(preset) }
+                } label: {
+                    VStack(spacing: 12) {
+                        Spacer(minLength: 0)
+                        Image(systemName: preset.iconName)
+                            .font(.system(size: 40, weight: .bold))
+                        VStack(spacing: 4) {
+                            Text(preset.title)
+                                .font(.headline)
+                            Text(preset.durationLabel)
+                                .font(.subheadline.bold())
                         }
-                        .frame(maxWidth: .infinity, minHeight: 152)
-                        .padding(12)
-                        .background(selectedPresetID == preset.id ? preset.tint : Color.sky.opacity(0.82))
-                        .foregroundStyle(selectedPresetID == preset.id ? Color.white : Color.cocoa)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 22)
-                                .stroke(selectedPresetID == preset.id ? preset.tint : Color.candyBlue.opacity(0.12), lineWidth: 1)
-                        )
-                        .clipShape(RoundedRectangle(cornerRadius: 22))
+                        Spacer(minLength: 0)
                     }
-                    .buttonStyle(.plain)
-                    .disabled(disabled)
-
+                    .frame(maxWidth: .infinity, minHeight: 152)
+                    .padding(12)
+                    .background(selectedPresetID == preset.id ? preset.tint : Color.sky.opacity(0.82))
+                    .foregroundStyle(selectedPresetID == preset.id ? Color.white : Color.cocoa)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 22)
+                            .stroke(selectedPresetID == preset.id ? preset.tint : Color.candyBlue.opacity(0.12), lineWidth: 1)
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 22))
+                }
+                .buttonStyle(.plain)
+                .disabled(disabled)
+                .overlay(alignment: .topTrailing) {
                     Button {
                         if !disabled { onEdit(preset) }
                     } label: {
@@ -930,6 +1157,7 @@ private struct PresetGridView: View {
                     }
                     .buttonStyle(.plain)
                     .disabled(disabled)
+                    .padding(4)
                 }
             }
 
@@ -964,6 +1192,62 @@ private struct PresetGridView: View {
     }
 }
 
+private struct InitialPresetPickerSheet: View {
+    let groups: [InitialPresetGroup]
+    let onSelect: (InitialPresetGroup) -> Void
+    @State private var selectedGroupID: String?
+
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("最初にえらんでね")
+                    .font(.title3.bold())
+                    .foregroundStyle(Color.cocoa)
+
+                Text("やりたい方向を1つえらぶと、最初のやることがセットされるよ。")
+                    .font(.subheadline)
+                    .foregroundStyle(Color.cocoa.opacity(0.7))
+
+                ForEach(groups) { group in
+                    Button {
+                        selectedGroupID = group.id
+                    } label: {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(group.title)
+                                .font(.headline)
+                                .foregroundStyle(selectedGroupID == group.id ? .white : Color.cocoa)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(14)
+                        .background(selectedGroupID == group.id ? Color.candyBlue : Color.sky.opacity(0.82))
+                        .clipShape(RoundedRectangle(cornerRadius: 18))
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                Spacer()
+
+                Button {
+                    guard let selectedGroupID,
+                          let group = groups.first(where: { $0.id == selectedGroupID }) else { return }
+                    onSelect(group)
+                } label: {
+                    Text("けってい")
+                        .font(.headline.bold())
+                        .frame(maxWidth: .infinity, minHeight: 56)
+                        .background(Color.candyBlue)
+                        .foregroundStyle(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 18))
+                }
+                .disabled(selectedGroupID == nil)
+                .opacity(selectedGroupID == nil ? 0.45 : 1)
+            }
+            .padding(20)
+            .navigationTitle("")
+        }
+    }
+}
+
 private struct PresetEditorSheet: View {
     @State private var showingDeleteConfirmation = false
     @Binding var title: String
@@ -971,6 +1255,7 @@ private struct PresetEditorSheet: View {
     @Binding var tracksTime: Bool
     @Binding var iconName: String
     @Binding var tint: PresetTint
+    @Binding var isWriting: Bool
     let isEditing: Bool
     let canDelete: Bool
     let onSave: () -> Void
@@ -989,6 +1274,7 @@ private struct PresetEditorSheet: View {
                             .textFieldStyle(.roundedBorder)
 
                         Toggle("時間をはかる", isOn: $tracksTime)
+                        Toggle("ノートを使う", isOn: $isWriting)
 
                         if tracksTime {
                             Stepper("\(minutes)分", value: $minutes, in: 1...15)
@@ -1169,8 +1455,10 @@ private struct DayLogListCard: View {
     @State private var pendingDeleteLog: HabitLog?
     let date: Date
     let logs: [HabitLog]
+    let noteText: String
     let canAdd: Bool
     let onAdd: () -> Void
+    let onNote: () -> Void
     let onDelete: (HabitLog) -> Void
 
     var body: some View {
@@ -1221,6 +1509,39 @@ private struct DayLogListCard: View {
                     .padding(.vertical, 4)
                 }
             }
+
+            Button {
+                onNote()
+            } label: {
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("ノート")
+                            .font(.headline)
+                            .foregroundStyle(Color.cocoa)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption.bold())
+                            .foregroundStyle(Color.candyBlue)
+                    }
+                    if noteText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        Text("まだノートがないよ")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(Color.cocoa.opacity(0.6))
+                    } else {
+                        Text(noteText)
+                            .font(.subheadline)
+                            .foregroundStyle(Color.cocoa.opacity(0.75))
+                            .lineLimit(2)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(12)
+                .background(Color.cream.opacity(0.9))
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+            }
+            .buttonStyle(.plain)
+            .disabled(!canAdd)
+            .opacity(canAdd ? 1 : 0.45)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(14)
@@ -1302,6 +1623,74 @@ private struct AddLogSheet: View {
     }
 }
 
+private struct DailyNoteSheet: View {
+    let date: Date
+    let presetTitle: String?
+    let remainingSeconds: Int?
+    let totalSeconds: Int?
+    let isRunning: Bool
+    @Binding var text: String
+    let onClose: () -> Void
+
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 16) {
+                Text(dayTitleFormatter.string(from: date))
+                    .font(.headline)
+                    .foregroundStyle(Color.cocoa)
+
+                if let presetTitle {
+                    Text(presetTitle)
+                        .font(.title3.bold())
+                        .foregroundStyle(Color.candyBlue)
+                }
+
+                if let totalSeconds {
+                    let displaySeconds = isRunning ? (remainingSeconds ?? totalSeconds) : totalSeconds
+                    HStack(spacing: 8) {
+                        Image(systemName: "timer")
+                        Text(formattedTime(displaySeconds))
+                            .monospacedDigit()
+                    }
+                    .font(.subheadline.bold())
+                    .foregroundStyle(Color.cocoa)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(Color.sky.opacity(0.8))
+                    .clipShape(Capsule())
+                }
+
+                TextEditor(text: $text)
+                    .frame(minHeight: 240)
+                    .padding(10)
+                    .background(Color.cream.opacity(0.9))
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(Color.candyBlue.opacity(0.15), lineWidth: 1)
+                    )
+
+                Spacer()
+            }
+            .padding(20)
+            .navigationTitle("ノート")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("とじる", action: onClose)
+                }
+            }
+        }
+    }
+
+    private func formattedTime(_ total: Int) -> String {
+        let value = max(total, 0)
+        let minutes = value / 60
+        let seconds = value % 60
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
+}
+
+
 private struct CelebrationView: View {
     let totalDays: Int
     let streakDays: Int
@@ -1372,6 +1761,7 @@ private struct CelebrationView: View {
         }
     }
 }
+
 
 private struct CircularTimerView: View {
     let remainingSeconds: Int

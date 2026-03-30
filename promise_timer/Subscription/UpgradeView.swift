@@ -18,6 +18,7 @@ struct UpgradeView: View {
                     planTiles
                     primaryAction
                     trialCaption
+                    legalLinks
                     restoreRow
                     supportCard
 
@@ -184,15 +185,31 @@ struct UpgradeView: View {
     }
 
     private var trialCaption: some View {
-        Text("無料トライアル終了後はいつでも解約できます")
+        Text(pricingDisclosure)
             .font(.footnote)
             .foregroundStyle(Color.cocoa.opacity(0.65))
+            .multilineTextAlignment(.center)
+    }
+
+    private var legalLinks: some View {
+        HStack(spacing: 16) {
+            if let privacyPolicyURL {
+                Link("プライバシーポリシー", destination: privacyPolicyURL)
+            }
+            if let eulaURL {
+                Link("利用規約（EULA）", destination: eulaURL)
+            }
+        }
+        .font(.footnote.bold())
+        .foregroundStyle(Color.candyBlue)
     }
 
     private var perks: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("プレミアム特典")
                 .font(.headline)
+            Text("・広告を非表示")
+                .font(.subheadline)
             Text("・やることを最大20個まで登録")
                 .font(.subheadline)
             Text("・今後の追加特典を優先適用")
@@ -221,6 +238,20 @@ struct UpgradeView: View {
             return "2週間の無料トライアルを開始"
         }
         return "1ヶ月の無料トライアルを開始"
+    }
+
+    private var pricingDisclosure: String {
+        let monthlyPrice = subscriptionManager.productPrice(for: SubscriptionManager.monthlyProductID)
+        let yearlyPrice = subscriptionManager.productPrice(for: SubscriptionManager.yearlyProductID)
+        return "無料トライアル終了後は自動更新され、月払いは\(monthlyPrice)/月、年払いは\(yearlyPrice)/年が請求されます。いつでも解約できます。"
+    }
+
+    private var privacyPolicyURL: URL? {
+        URL(string: "https://github.com/tsumorimasahiro/promise_timer/blob/main/privacy_policy.txt")
+    }
+
+    private var eulaURL: URL? {
+        URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")
     }
 
     private func purchaseSelected() async {
