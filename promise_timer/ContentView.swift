@@ -7,9 +7,9 @@
 
 import SwiftUI
 import AudioToolbox
-import Combine
 import StoreKit
 import AppTrackingTransparency
+import WidgetKit
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -59,56 +59,44 @@ fileprivate enum PresetTint: String, Codable, CaseIterable {
     }
 }
 
+fileprivate let appGroupID = "group.com.tsumori.promise_timer"
+fileprivate let appGroupDefaults = UserDefaults(suiteName: appGroupID) ?? .standard
+
 fileprivate struct HabitPreset: Identifiable, Codable, Hashable {
     let id: String
     let title: String
-    let minutes: Int?
     let iconName: String
     let tintName: PresetTint
-    let isWriting: Bool
 
     init(
         id: String = UUID().uuidString,
         title: String,
-        minutes: Int?,
         iconName: String,
-        tintName: PresetTint,
-        isWriting: Bool = false
+        tintName: PresetTint
     ) {
         self.id = id
         self.title = title
-        self.minutes = minutes
         self.iconName = iconName
         self.tintName = tintName
-        self.isWriting = isWriting
     }
 
     var tint: Color {
         tintName.color
     }
 
-    var durationLabel: String {
-        guard let minutes else { return "記録だけ" }
-        return "\(minutes)分"
-    }
-
     private enum CodingKeys: String, CodingKey {
         case id
         case title
-        case minutes
         case iconName
         case tintName
-        case isWriting
     }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
         title = try container.decode(String.self, forKey: .title)
-        minutes = try container.decodeIfPresent(Int.self, forKey: .minutes)
         iconName = try container.decode(String.self, forKey: .iconName)
         tintName = try container.decode(PresetTint.self, forKey: .tintName)
-        isWriting = try container.decodeIfPresent(Bool.self, forKey: .isWriting) ?? false
     }
 }
 
@@ -116,23 +104,17 @@ fileprivate struct HabitLog: Identifiable, Codable, Hashable {
     let id: String
     let presetID: String
     let title: String
-    let minutes: Int?
-    let actualMinutes: Int
     let completedAt: Date
 
     init(
         id: String = UUID().uuidString,
         presetID: String,
         title: String,
-        minutes: Int?,
-        actualMinutes: Int,
         completedAt: Date = Date()
     ) {
         self.id = id
         self.presetID = presetID
         self.title = title
-        self.minutes = minutes
-        self.actualMinutes = actualMinutes
         self.completedAt = completedAt
     }
 
@@ -140,8 +122,6 @@ fileprivate struct HabitLog: Identifiable, Codable, Hashable {
         case id
         case presetID
         case title
-        case minutes
-        case actualMinutes
         case completedAt
     }
 
@@ -150,88 +130,84 @@ fileprivate struct HabitLog: Identifiable, Codable, Hashable {
         id = try container.decode(String.self, forKey: .id)
         presetID = try container.decode(String.self, forKey: .presetID)
         title = try container.decode(String.self, forKey: .title)
-        minutes = try container.decodeIfPresent(Int.self, forKey: .minutes)
-        actualMinutes = try container.decodeIfPresent(Int.self, forKey: .actualMinutes) ?? minutes ?? 0
         completedAt = try container.decode(Date.self, forKey: .completedAt)
     }
 }
 
 fileprivate let defaultPresets: [HabitPreset] = [
-    HabitPreset(id: "stretch", title: "ストレッチ", minutes: 1, iconName: "figure.run", tintName: .mintGreen),
-    HabitPreset(id: "tidy", title: "片づけ", minutes: 1, iconName: "checkmark.circle.fill", tintName: .sunshine),
-    HabitPreset(id: "bath", title: "お風呂", minutes: nil, iconName: "drop.fill", tintName: .peach)
+    HabitPreset(id: "stretch", title: "ストレッチ", iconName: "figure.run", tintName: .mintGreen),
+    HabitPreset(id: "tidy", title: "片づけ", iconName: "checkmark.circle.fill", tintName: .sunshine),
+    HabitPreset(id: "bath", title: "お風呂", iconName: "bath", tintName: .peach)
 ]
 
-fileprivate struct InitialPresetGroup: Identifiable, Hashable {
-    let id: String
-    let title: String
-    let presets: [HabitPreset]
-
-    var previewText: String {
-        presets.map { $0.title }.joined(separator: "、")
-    }
-}
-
-fileprivate let initialPresetGroups: [InitialPresetGroup] = [
-    InitialPresetGroup(
-        id: "lighten",
-        title: "心を軽くしたい",
-        presets: [
-            HabitPreset(id: "meditation", title: "瞑想", minutes: 1, iconName: "sparkles", tintName: .lavender),
-            HabitPreset(id: "breathing", title: "深呼吸", minutes: 1, iconName: "wind", tintName: .mintGreen),
-            HabitPreset(id: "good-things", title: "よかったこと書く", minutes: 1, iconName: "pencil.and.scribble", tintName: .sunshine, isWriting: true),
-            HabitPreset(id: "gratitude", title: "感謝を書く", minutes: 1, iconName: "heart.fill", tintName: .peach, isWriting: true)
-        ]
-    ),
-    InitialPresetGroup(
-        id: "organize",
-        title: "生活を整えたい",
-        presets: [
-            HabitPreset(id: "tidy-room", title: "片付ける", minutes: 1, iconName: "checkmark.circle.fill", tintName: .sunshine),
-            HabitPreset(id: "clean", title: "掃除する", minutes: 1, iconName: "sparkles", tintName: .mintGreen),
-            HabitPreset(id: "bath-time", title: "お風呂入る", minutes: nil, iconName: "drop.fill", tintName: .peach),
-            HabitPreset(id: "journal", title: "日記書く", minutes: 1, iconName: "book.fill", tintName: .lavender, isWriting: true)
-        ]
-    ),
-    InitialPresetGroup(
-        id: "grow",
-        title: "成長したい",
-        presets: [
-            HabitPreset(id: "goal", title: "今日の目標を書く", minutes: 1, iconName: "square.and.pencil", tintName: .sunshine, isWriting: true),
-            HabitPreset(id: "reading", title: "読書", minutes: 1, iconName: "book.fill", tintName: .lavender),
-            HabitPreset(id: "study", title: "勉強", minutes: 1, iconName: "pencil.and.scribble", tintName: .sunshine),
-            HabitPreset(id: "review", title: "振り返りを書く", minutes: 1, iconName: "square.and.pencil", tintName: .candyBlue, isWriting: true)
-        ]
-    ),
-    InitialPresetGroup(
-        id: "body",
-        title: "体を変えたい",
-        presets: [
-            HabitPreset(id: "stretching", title: "ストレッチ", minutes: 1, iconName: "figure.run", tintName: .mintGreen),
-            HabitPreset(id: "exercise", title: "運動", minutes: 1, iconName: "figure.walk", tintName: .candyBlue),
-            HabitPreset(id: "bath", title: "お風呂に入る", minutes: nil, iconName: "drop.fill", tintName: .peach),
-            HabitPreset(id: "meal-log", title: "食事を記録する", minutes: 1, iconName: "fork.knife", tintName: .sunshine, isWriting: true)
-        ]
-    )
+fileprivate let initialSelectablePresets: [HabitPreset] = [
+    HabitPreset(id: "study", title: "勉強", iconName: "study", tintName: .sunshine),
+    HabitPreset(id: "reading", title: "読書", iconName: "book", tintName: .lavender),
+    HabitPreset(id: "exercise", title: "運動", iconName: "run", tintName: .candyBlue),
+    HabitPreset(id: "clean", title: "掃除", iconName: "clean", tintName: .mintGreen),
+    HabitPreset(id: "bath", title: "お風呂", iconName: "bath", tintName: .peach),
+    HabitPreset(id: "breakfast", title: "朝ごはん", iconName: "eat", tintName: .sunshine)
 ]
 
 fileprivate let presetIcons: [String] = [
-    "drop.fill",
-    "pencil.and.scribble",
-    "book.fill",
-    "figure.run",
-    "figure.walk",
-    "checkmark.circle.fill",
-    "cup.and.saucer.fill",
-    "music.note",
-    "sparkles",
-    "leaf.fill",
-    "moon.stars.fill",
-    "wind",
-    "heart.fill",
-    "fork.knife",
-    "square.and.pencil"
+    "study",
+    "book",
+    "run",
+    "clean",
+    "bath",
+    "eat"
 ]
+
+fileprivate let customIconNames: Set<String> = [
+    "study",
+    "book",
+    "run",
+    "clean",
+    "bath",
+    "eat"
+]
+
+fileprivate let customIconMapByID: [String: String] = [
+    "study": "study",
+    "reading": "book",
+    "exercise": "run",
+    "clean": "clean",
+    "bath": "bath",
+    "bath-time": "bath",
+    "breakfast": "eat"
+]
+
+fileprivate let customIconMapByTitle: [String: String] = [
+    "勉強": "study",
+    "読書": "book",
+    "運動": "run",
+    "掃除": "clean",
+    "お風呂": "bath",
+    "お風呂入る": "bath",
+    "お風呂に入る": "bath",
+    "朝ごはん": "eat",
+    "朝ご飯": "eat"
+]
+
+fileprivate struct PresetIconView: View {
+    let name: String
+    let size: CGFloat
+    let tint: Color?
+
+    var body: some View {
+        if customIconNames.contains(name) {
+            Image(name)
+                .resizable()
+                .renderingMode(.original)
+                .scaledToFit()
+                .frame(width: size, height: size)
+        } else {
+            Image(systemName: name)
+                .font(.system(size: size, weight: .bold))
+                .foregroundStyle(tint ?? Color.cocoa)
+        }
+    }
+}
 
 extension Color {
     static let candyBlue = Color(red: 0.16, green: 0.45, blue: 0.48)
@@ -251,47 +227,32 @@ extension Color {
 
 struct ContentView: View {
     @Environment(\.requestReview) private var requestReview
-    @AppStorage("habitLogsStore") private var habitLogsStorage: String = ""
-    @AppStorage("habitPresetsStore") private var habitPresetsStorage: String = ""
+    @AppStorage("habitLogsStore", store: appGroupDefaults) private var habitLogsStorage: String = ""
+    @AppStorage("habitPresetsStore", store: appGroupDefaults) private var habitPresetsStorage: String = ""
     @AppStorage("isSubscribed") private var isSubscribed: Bool = false
     @AppStorage("reviewActionCount") private var reviewActionCount: Int = 0
     @AppStorage("reviewFirstUseTime") private var reviewFirstUseTime: Double = 0
     @AppStorage("reviewLastRequestTime") private var reviewLastRequestTime: Double = 0
     @AppStorage("didRequestATT") private var didRequestATT: Bool = false
     @AppStorage("didSelectInitialPresets") private var didSelectInitialPresets: Bool = false
-    @AppStorage("dailyNotesStore") private var dailyNotesStorage: String = ""
-
     @StateObject private var subscriptionManager = SubscriptionManager()
     @State private var habitPresets: [HabitPreset] = defaultPresets
     @State private var selectedPresetID: String = defaultPresets[0].id
-    @State private var remainingSeconds: Int = 0
-    @State private var timerRunning = false
-    @State private var hasFinished = false
-    @State private var showHanamaru = false
     @State private var selectedLogDate: Date = Date()
-    @State private var celebrationDayCount: Int = 0
-    @State private var celebrationStreak: Int = 0
-    @State private var celebrationTitle: String = ""
-    @State private var celebrationMinutesText: String = ""
+    @State private var expandedPresetID: String?
+    @State private var isFlipped = false
+    @State private var isCompleting = false
     @State private var showingPresetEditor = false
     @State private var editingPreset: HabitPreset?
     @State private var draftPresetTitle = ""
-    @State private var draftPresetMinutes = 0
-    @State private var draftPresetTracksTime = true
     @State private var draftPresetIconName = presetIcons[0]
     @State private var draftPresetTint: PresetTint = .peach
-    @State private var draftPresetIsWriting = false
     @State private var showingPaywall = false
     @State private var showingAddLogSheet = false
     @State private var showingInitialPresetPicker = false
-    @State private var showingNoteSheet = false
-    @State private var noteDraft = ""
-    @State private var noteDate = Date()
-    @State private var notePreset: HabitPreset?
 
-    private let tick = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     private let calendar = Calendar(identifier: .gregorian)
-    private var maxPresetCount: Int { isSubscribed ? 20 : 4 }
+    private var maxPresetCount: Int { isSubscribed ? 20 : 6 }
     private let reviewThreshold = 5
     private let reviewCooldownDays = 30
 
@@ -300,32 +261,10 @@ struct ContentView: View {
             NavigationStack {
                 ScrollView {
                     VStack(spacing: 16) {
-                    HeroHeaderView(
-                        streak: currentStreak,
-                        activeDays: activeDayCount,
-                        recentDays: recentDotDays,
-                        completedDayKeys: Set(logsByDay.keys)
+                    WeeklyDotsCard(
+                        days: currentWeekDays,
+                        logsByDay: logsByDay
                     )
-
-                    if let preset = selectedPreset {
-                        if let minutes = preset.minutes {
-                            CircularTimerView(
-                                remainingSeconds: remainingSeconds,
-                                totalSeconds: max(minutes * 60, 1),
-                                isRunning: timerRunning,
-                                accentColor: preset.tint
-                            )
-                            .frame(width: 216, height: 216)
-
-                            Text("\(preset.title) を記録する")
-                                .font(.headline)
-                                .foregroundStyle(Color.cocoa)
-                        } else {
-                            InstantLogCard(preset: preset)
-                        }
-                    }
-
-                    controlButtons
 
                     VStack(spacing: 10) {
                         HStack {
@@ -341,7 +280,8 @@ struct ContentView: View {
                             onEdit: openEditPreset(_:),
                             onAdd: openAddPreset,
                             showsAddTile: habitPresets.count < maxPresetCount || !isSubscribed,
-                            disabled: timerRunning
+                            disabled: false,
+                            completedPresetIDsToday: completedPresetIDsToday
                         )
 
                     }
@@ -378,10 +318,9 @@ struct ContentView: View {
                     DayLogListCard(
                         date: selectedLogDate,
                         logs: logs(for: selectedLogDate),
-                        noteText: noteText(for: selectedLogDate),
+                        iconForLog: iconForLog(_:),
                         canAdd: canAddLog(for: selectedLogDate),
                         onAdd: { showingAddLogSheet = true },
-                        onNote: { openNote(for: selectedLogDate, preset: nil) },
                         onDelete: deleteLog(_:)
                     )
 
@@ -411,14 +350,12 @@ struct ContentView: View {
             .tabItem { Label("設定", systemImage: "gearshape.fill") }
         }
         .onAppear {
+            migrateDefaultsToAppGroupIfNeeded()
             loadPresets()
             if habitPresetsStorage.isEmpty {
                 showingInitialPresetPicker = !didSelectInitialPresets
             } else {
                 didSelectInitialPresets = true
-            }
-            if let preset = selectedPreset {
-                syncTimer(for: preset)
             }
         }
         .sheet(isPresented: $showingPaywall) {
@@ -438,13 +375,8 @@ struct ContentView: View {
         .sheet(isPresented: $showingPresetEditor) {
             PresetEditorSheet(
                 title: $draftPresetTitle,
-                minutes: $draftPresetMinutes,
-                tracksTime: $draftPresetTracksTime,
                 iconName: $draftPresetIconName,
                 tint: $draftPresetTint,
-                isWriting: $draftPresetIsWriting,
-                isEditing: editingPreset != nil,
-                canDelete: editingPreset != nil,
                 onSave: savePreset,
                 onDelete: deletePreset,
                 onCancel: {
@@ -465,10 +397,19 @@ struct ContentView: View {
         }
         .fullScreenCover(isPresented: $showingInitialPresetPicker) {
             InitialPresetPickerSheet(
-                groups: initialPresetGroups,
-                onSelect: { group in
-                    habitPresets = group.presets
-                    if let first = group.presets.first {
+                presets: initialSelectablePresets,
+                onSelect: { selected in
+                    habitPresets = selected
+                    if let first = selected.first {
+                        selectedPresetID = first.id
+                    }
+                    persistPresets()
+                    didSelectInitialPresets = true
+                    showingInitialPresetPicker = false
+                },
+                onSkip: {
+                    habitPresets = defaultPresets
+                    if let first = defaultPresets.first {
                         selectedPresetID = first.id
                     }
                     persistPresets()
@@ -478,48 +419,11 @@ struct ContentView: View {
             )
             .interactiveDismissDisabled(true)
         }
-        .sheet(isPresented: $showingNoteSheet) {
-            DailyNoteSheet(
-                date: noteDate,
-                presetTitle: notePreset?.title,
-                remainingSeconds: noteTimerRemainingSeconds,
-                totalSeconds: noteTimerTotalSeconds,
-                isRunning: timerRunning,
-                text: $noteDraft,
-                onClose: {
-                    showingNoteSheet = false
-                }
-            )
-            .onDisappear {
-                saveNote(noteDraft, for: noteDate)
-                notePreset = nil
-            }
-        }
-        .onReceive(tick) { _ in
-            guard timerRunning else { return }
-            if remainingSeconds > 0 {
-                remainingSeconds -= 1
-                if remainingSeconds == 0 {
-                    hasFinished = true
-                    playEndSound()
-                }
-            } else {
-                remainingSeconds -= 1
-                hasFinished = true
-            }
-        }
-        .fullScreenCover(isPresented: $showHanamaru) {
-            CelebrationView(
-                totalDays: celebrationDayCount,
-                streakDays: celebrationStreak,
-                title: celebrationTitle,
-                minutesText: celebrationMinutesText
-            ) {
-                playButtonTapSound()
-                closeCelebration()
-            }
-        }
         .tint(Color.candyBlue)
+        .overlay(expandedPresetOverlay)
+        .onOpenURL { url in
+            handleWidgetURL(url)
+        }
     }
 
     private var appBackground: some View {
@@ -554,6 +458,15 @@ struct ContentView: View {
         habitPresets.first(where: { $0.id == selectedPresetID })
     }
 
+    private var presetByID: [String: HabitPreset] {
+        Dictionary(uniqueKeysWithValues: habitPresets.map { ($0.id, $0) })
+    }
+
+    private var expandedPreset: HabitPreset? {
+        guard let expandedPresetID else { return nil }
+        return habitPresets.first(where: { $0.id == expandedPresetID })
+    }
+
     private var logs: [HabitLog] {
         guard let data = habitLogsStorage.data(using: .utf8) else { return [] }
         let decoder = JSONDecoder()
@@ -565,24 +478,20 @@ struct ContentView: View {
         Dictionary(grouping: logs) { ymdFormatter.string(from: $0.completedAt) }
     }
 
-    private var dailyNotes: [String: String] {
-        guard let data = dailyNotesStorage.data(using: .utf8) else { return [:] }
-        let decoder = JSONDecoder()
-        return (try? decoder.decode([String: String].self, from: data)) ?? [:]
-    }
-
-    private var noteTimerRemainingSeconds: Int? {
-        guard let preset = notePreset, preset.minutes != nil else { return nil }
-        return remainingSeconds
-    }
-
-    private var noteTimerTotalSeconds: Int? {
-        guard let preset = notePreset, let minutes = preset.minutes else { return nil }
-        return max(minutes * 60, 1)
+    private var completedPresetIDsToday: Set<String> {
+        let key = ymdFormatter.string(from: Date())
+        let ids = (logsByDay[key] ?? []).map(\.presetID)
+        return Set(ids)
     }
 
     private var activeDayCount: Int {
         logsByDay.keys.count
+    }
+
+    private var currentWeekDays: [Date] {
+        let today = calendar.startOfDay(for: Date())
+        let start = calendar.dateInterval(of: .weekOfYear, for: today)?.start ?? today
+        return (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: start) }
     }
 
     private var currentStreak: Int {
@@ -610,112 +519,15 @@ struct ContentView: View {
 
     private var grassDays: [Date] {
         let today = calendar.startOfDay(for: Date())
-        return (0..<56).compactMap { calendar.date(byAdding: .day, value: -$0, to: today) }.reversed()
-    }
-
-    @ViewBuilder
-    private var controlButtons: some View {
-        if let preset = selectedPreset {
-            if preset.minutes == nil {
-                Button {
-                    playButtonTapSound()
-                    if preset.isWriting {
-                        openNote(for: Date(), preset: preset)
-                    }
-                    logCompletion(for: preset)
-                } label: {
-                    Text("できた")
-                        .font(.title2.bold())
-                        .frame(maxWidth: .infinity, minHeight: 68)
-                        .background(preset.tint)
-                        .foregroundStyle(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 18))
-                }
-                .padding(.horizontal, 4)
-            } else if timerRunning {
-                HStack(spacing: 12) {
-                    Button {
-                        playButtonTapSound()
-                        logCompletion(for: preset)
-                    } label: {
-                        Text("できた")
-                            .font(.title2.bold())
-                            .frame(maxWidth: .infinity, minHeight: 68)
-                            .background(preset.tint)
-                            .foregroundStyle(.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 18))
-                    }
-
-                    Button {
-                        playButtonTapSound()
-                        cancelTimer()
-                    } label: {
-                        Text("やめる")
-                            .font(.body.bold())
-                            .frame(maxWidth: .infinity, minHeight: 56)
-                            .background(Color.sky)
-                            .foregroundStyle(Color.candyBlue)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 18)
-                                    .stroke(Color.candyBlue.opacity(0.35), lineWidth: 1)
-                            )
-                            .clipShape(RoundedRectangle(cornerRadius: 18))
-                    }
-                }
-                .padding(.horizontal, 4)
-            } else if hasFinished {
-                HStack(spacing: 12) {
-                    Button {
-                        playButtonTapSound()
-                        logCompletion(for: preset)
-                    } label: {
-                        Text("できた")
-                            .font(.title2.bold())
-                            .frame(maxWidth: .infinity, minHeight: 68)
-                            .background(preset.tint)
-                            .foregroundStyle(.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 18))
-                    }
-
-                    Button {
-                        playButtonTapSound()
-                        cancelTimer()
-                    } label: {
-                        Text("やめる")
-                            .font(.body.bold())
-                            .frame(maxWidth: .infinity, minHeight: 56)
-                            .background(Color.sky)
-                            .foregroundStyle(Color.candyBlue)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 18)
-                                    .stroke(Color.candyBlue.opacity(0.35), lineWidth: 1)
-                            )
-                            .clipShape(RoundedRectangle(cornerRadius: 18))
-                    }
-                }
-                .padding(.horizontal, 4)
-            } else {
-                Button {
-                    playButtonTapSound()
-                    startTimer(for: preset)
-                } label: {
-                    Text("スタート")
-                        .font(.title2.bold())
-                        .frame(maxWidth: .infinity, minHeight: 70)
-                        .background(preset.tint)
-                        .foregroundStyle(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
-                }
-                .padding(.horizontal, 4)
-            }
-        }
+        let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: today)?.start ?? today
+        let start = calendar.date(byAdding: .day, value: -49, to: startOfWeek) ?? today
+        return (0..<56).compactMap { calendar.date(byAdding: .day, value: $0, to: start) }
     }
 
     private func selectPreset(_ preset: HabitPreset) {
-        guard !timerRunning else { return }
         selectedPresetID = preset.id
-        hasFinished = false
-        syncTimer(for: preset)
+        expandedPresetID = preset.id
+        isFlipped = false
     }
 
     private func openAddPreset() {
@@ -727,22 +539,16 @@ struct ContentView: View {
         }
         editingPreset = nil
         draftPresetTitle = ""
-        draftPresetMinutes = 5
-        draftPresetTracksTime = true
         draftPresetIconName = presetIcons[0]
         draftPresetTint = .peach
-        draftPresetIsWriting = false
         showingPresetEditor = true
     }
 
     private func openEditPreset(_ preset: HabitPreset) {
         editingPreset = preset
         draftPresetTitle = preset.title
-        draftPresetMinutes = preset.minutes ?? 5
-        draftPresetTracksTime = preset.minutes != nil
         draftPresetIconName = preset.iconName
         draftPresetTint = preset.tintName
-        draftPresetIsWriting = preset.isWriting
         showingPresetEditor = true
     }
 
@@ -750,14 +556,11 @@ struct ContentView: View {
         let title = draftPresetTitle.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !title.isEmpty else { return }
 
-        let minutes: Int? = draftPresetTracksTime ? min(max(draftPresetMinutes, 1), 15) : nil
         let preset = HabitPreset(
             id: editingPreset?.id ?? UUID().uuidString,
             title: title,
-            minutes: minutes,
             iconName: draftPresetIconName,
-            tintName: draftPresetTint,
-            isWriting: draftPresetIsWriting
+            tintName: draftPresetTint
         )
 
         if let editingPreset,
@@ -765,11 +568,14 @@ struct ContentView: View {
             habitPresets[index] = preset
         } else if habitPresets.count < maxPresetCount {
             habitPresets.append(preset)
+        } else if !isSubscribed {
+            showingPaywall = true
+            showingPresetEditor = false
+            return
         }
 
         persistPresets()
         selectedPresetID = preset.id
-        syncTimer(for: preset)
         showingPresetEditor = false
     }
 
@@ -788,48 +594,15 @@ struct ContentView: View {
 
         if selectedPresetID == editingPreset.id, let replacement = habitPresets.first {
             selectedPresetID = replacement.id
-            syncTimer(for: replacement)
         }
 
         showingPresetEditor = false
     }
 
-    private func startTimer(for preset: HabitPreset) {
-        guard let minutes = preset.minutes else {
-            logCompletion(for: preset)
-            return
-        }
-        hasFinished = false
-        showHanamaru = false
-        remainingSeconds = minutes * 60
-        timerRunning = true
-        if preset.isWriting {
-            openNote(for: Date(), preset: preset)
-        }
-    }
-
-    private func cancelTimer() {
-        timerRunning = false
-        hasFinished = false
-        if let preset = selectedPreset {
-            syncTimer(for: preset)
-        }
-    }
-
-    private func syncTimer(for preset: HabitPreset) {
-        remainingSeconds = (preset.minutes ?? 0) * 60
-    }
-
     private func logCompletion(for preset: HabitPreset) {
-        timerRunning = false
-        hasFinished = false
-        let actualMinutes = completedMinutes(for: preset)
-
         let log = HabitLog(
             presetID: preset.id,
-            title: preset.title,
-            minutes: preset.minutes,
-            actualMinutes: actualMinutes
+            title: preset.title
         )
 
         var items = logs
@@ -839,21 +612,13 @@ struct ContentView: View {
 
         let completedDate = calendar.startOfDay(for: log.completedAt)
         selectedLogDate = completedDate
-        celebrationDayCount = Dictionary(grouping: items) { ymdFormatter.string(from: $0.completedAt) }.keys.count
-        celebrationStreak = calculateStreak(from: items)
-        celebrationTitle = preset.title
-        celebrationMinutesText = minutesText(for: log)
-        showHanamaru = true
     }
 
     private func addLog(for preset: HabitPreset, on date: Date) {
         let completedAt = mergeDate(date, withTimeFrom: Date())
-        let actualMinutes = preset.minutes ?? 0
         let log = HabitLog(
             presetID: preset.id,
             title: preset.title,
-            minutes: preset.minutes,
-            actualMinutes: actualMinutes,
             completedAt: completedAt
         )
         var items = logs
@@ -895,32 +660,14 @@ struct ContentView: View {
         return calendar.date(bySettingHour: time.hour ?? 12, minute: time.minute ?? 0, second: time.second ?? 0, of: calendar.startOfDay(for: date)) ?? date
     }
 
-    private func calculateStreak(from logs: [HabitLog]) -> Int {
-        let grouped = Dictionary(grouping: logs) { ymdFormatter.string(from: $0.completedAt) }
-        guard !grouped.isEmpty else { return 0 }
-        var date = calendar.startOfDay(for: Date())
-        var streak = 0
-
-        while true {
-            let key = ymdFormatter.string(from: date)
-            if grouped[key] != nil {
-                streak += 1
-                guard let previous = calendar.date(byAdding: .day, value: -1, to: date) else { break }
-                date = previous
-            } else {
-                break
-            }
-        }
-
-        return streak
-    }
-
     private func save(logs: [HabitLog]) {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         guard let data = try? encoder.encode(logs),
               let string = String(data: data, encoding: .utf8) else { return }
         habitLogsStorage = string
+        WidgetCenter.shared.reloadTimelines(ofKind: "PromiseTimerHabitCardWidget")
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     private func loadPresets() {
@@ -930,7 +677,12 @@ struct ContentView: View {
         }
         let decoder = JSONDecoder()
         if let items = try? decoder.decode([HabitPreset].self, from: data), !items.isEmpty {
-            habitPresets = Array(items.prefix(4))
+            let limited = Array(items.prefix(maxPresetCount))
+            let migrated = migratePresetIcons(in: limited)
+            habitPresets = migrated
+            if migrated != limited {
+                persistPresets()
+            }
         } else {
             habitPresets = didSelectInitialPresets ? defaultPresets : []
         }
@@ -951,71 +703,123 @@ struct ContentView: View {
         habitPresetsStorage = string
     }
 
-    private func noteText(for date: Date) -> String {
-        let key = ymdFormatter.string(from: date)
-        return dailyNotes[key] ?? ""
+    private func migratePresetIcons(in presets: [HabitPreset]) -> [HabitPreset] {
+        presets.map { preset in
+            if customIconNames.contains(preset.iconName) {
+                return preset
+            }
+            if let iconName = customIconMapByID[preset.id] ?? customIconMapByTitle[preset.title] {
+                return HabitPreset(
+                    id: preset.id,
+                    title: preset.title,
+                    iconName: iconName,
+                    tintName: preset.tintName
+                )
+            }
+            return preset
+        }
     }
 
-    private func saveNote(_ text: String, for date: Date) {
-        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        let key = ymdFormatter.string(from: date)
-        var notes = dailyNotes
-        if trimmed.isEmpty {
-            notes.removeValue(forKey: key)
-        } else {
-            notes[key] = text
+    private func migrateDefaultsToAppGroupIfNeeded() {
+        let standard = UserDefaults.standard
+
+        if habitPresetsStorage.isEmpty, let legacyPresets = standard.string(forKey: "habitPresetsStore") {
+            habitPresetsStorage = legacyPresets
         }
 
-        let encoder = JSONEncoder()
-        guard let data = try? encoder.encode(notes),
-              let string = String(data: data, encoding: .utf8) else { return }
-        dailyNotesStorage = string
+        if habitLogsStorage.isEmpty, let legacyLogs = standard.string(forKey: "habitLogsStore") {
+            habitLogsStorage = legacyLogs
+        }
     }
 
-    private func openNote(for date: Date, preset: HabitPreset?) {
-        noteDate = date
-        notePreset = preset
-        noteDraft = noteText(for: date)
-        showingNoteSheet = true
+    private func iconForLog(_ log: HabitLog) -> (name: String, tint: Color) {
+        if let preset = presetByID[log.presetID] {
+            return (preset.iconName, preset.tint)
+        }
+        if let iconName = customIconMapByID[log.presetID] ?? customIconMapByTitle[log.title] {
+            return (iconName, .candyBlue)
+        }
+        return ("checkmark.circle.fill", .candyBlue)
+    }
+
+    private var expandedPresetOverlay: some View {
+        Group {
+            if let preset = expandedPreset {
+                ZStack {
+                    Color.cream
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            closeExpanded()
+                        }
+
+                    VStack(spacing: 16) {
+                        Spacer()
+
+                        FlippablePresetCard(
+                            preset: preset,
+                            isFlipped: isFlipped,
+                            isCompleting: isCompleting,
+                            onDone: {
+                                playButtonTapSound()
+                                completeExpandedPreset(preset)
+                            },
+                            onCancel: {
+                                closeExpanded()
+                            }
+                        )
+                        .frame(maxWidth: .infinity)
+                        .padding(.horizontal, 24)
+                        .scaleEffect(1.05)
+                        .animation(.spring(response: 0.35, dampingFraction: 0.82), value: expandedPresetID)
+
+                        Spacer()
+                    }
+                }
+                .transition(.opacity)
+            }
+        }
+    }
+
+    private func completeExpandedPreset(_ preset: HabitPreset) {
+        guard !isCompleting else { return }
+        isCompleting = true
+        withAnimation(.easeInOut(duration: 0.4)) {
+            isFlipped = true
+        }
+        logCompletion(for: preset)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+            closeExpanded()
+            isCompleting = false
+        }
+    }
+
+    private func closeExpanded() {
+        expandedPresetID = nil
+        isFlipped = false
+    }
+
+    private func handleWidgetURL(_ url: URL) {
+        guard url.scheme == "promise-timer" else { return }
+        guard url.host == "preset" else { return }
+        let presetID = url.lastPathComponent
+        guard habitPresets.contains(where: { $0.id == presetID }) else { return }
+        selectedPresetID = presetID
+        expandedPresetID = presetID
+        isFlipped = false
     }
 
     private func deleteLog(_ log: HabitLog) {
         let updatedLogs = logs.filter { $0.id != log.id }
         save(logs: updatedLogs)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            WidgetCenter.shared.reloadTimelines(ofKind: "PromiseTimerHabitCardWidget")
+            WidgetCenter.shared.reloadAllTimelines()
+        }
     }
 
     private func logs(for date: Date) -> [HabitLog] {
         let key = ymdFormatter.string(from: date)
         return (logsByDay[key] ?? []).sorted { $0.completedAt > $1.completedAt }
-    }
-
-    private func closeCelebration() {
-        showHanamaru = false
-        if let preset = selectedPreset {
-            syncTimer(for: preset)
-        }
-    }
-
-    private func completedMinutes(for preset: HabitPreset) -> Int {
-        guard let minutes = preset.minutes else { return 0 }
-        let totalSeconds = minutes * 60
-        let elapsedSeconds: Int
-
-        if remainingSeconds >= 0 {
-            elapsedSeconds = max(totalSeconds - remainingSeconds, 0)
-        } else {
-            elapsedSeconds = totalSeconds + abs(remainingSeconds)
-        }
-
-        guard elapsedSeconds > 0 else { return 0 }
-        return Int(ceil(Double(elapsedSeconds) / 60.0))
-    }
-
-    private func minutesText(for log: HabitLog) -> String {
-        if log.actualMinutes == 0 {
-            return "記録だけ"
-        }
-        return "\(log.actualMinutes)分"
     }
 
     private func playButtonTapSound() {
@@ -1026,13 +830,6 @@ struct ContentView: View {
         #endif
     }
 
-    private func playEndSound() {
-        AudioServicesPlaySystemSound(1005)
-        #if os(iOS)
-        let generator = UISelectionFeedbackGenerator()
-        generator.selectionChanged()
-        #endif
-    }
 }
 
 private struct HeroHeaderView: View {
@@ -1085,20 +882,109 @@ private struct InstantLogCard: View {
 
     var body: some View {
         VStack(spacing: 10) {
-            Image(systemName: preset.iconName)
-                .font(.system(size: 48, weight: .bold))
-                .foregroundStyle(preset.tint)
+            PresetIconView(name: preset.iconName, size: 64, tint: preset.tint)
             Text(preset.title)
                 .font(.title3.bold())
                 .foregroundStyle(Color.cocoa)
-            Text("時間を決めずに、できたら記録")
-                .font(.headline)
-                .foregroundStyle(Color.cocoa.opacity(0.7))
+            Text("タップで記録")
+                .font(.subheadline)
+                .foregroundStyle(Color.cocoa.opacity(0.65))
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 24)
         .background(Color.sky.opacity(0.75))
         .clipShape(RoundedRectangle(cornerRadius: 24))
+    }
+}
+
+private struct FlippablePresetCard: View {
+    let preset: HabitPreset
+    let isFlipped: Bool
+    let isCompleting: Bool
+    let onDone: () -> Void
+    let onCancel: () -> Void
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 28)
+                .fill(preset.tint.opacity(0.25))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 28)
+                        .stroke(preset.tint.opacity(0.35), lineWidth: 1)
+                )
+
+            VStack(spacing: 14) {
+                ZStack {
+                    front
+                        .opacity(isFlipped ? 0 : 1)
+                        .rotation3DEffect(.degrees(isFlipped ? 180 : 0), axis: (x: 0, y: 1, z: 0))
+
+                    back
+                        .opacity(isFlipped ? 1 : 0)
+                        .rotation3DEffect(.degrees(isFlipped ? 0 : -180), axis: (x: 0, y: 1, z: 0))
+                }
+                .padding(.top, 18)
+
+                HStack(spacing: 12) {
+                    Button(action: onDone) {
+                        Text("できた")
+                            .font(.title3.bold())
+                            .frame(maxWidth: .infinity, minHeight: 50)
+                            .background(Color.cream)
+                            .foregroundStyle(Color.cocoa)
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .stroke(Color.cocoa.opacity(0.15), lineWidth: 1)
+                            )
+                    }
+                    .disabled(isCompleting)
+
+                    Button(action: onCancel) {
+                        Text("やめる")
+                            .font(.body.bold())
+                            .frame(maxWidth: .infinity, minHeight: 50)
+                            .background(Color.sky)
+                            .foregroundStyle(Color.cocoa)
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .stroke(Color.cocoa.opacity(0.2), lineWidth: 1)
+                            )
+                    }
+                    .disabled(isCompleting)
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 18)
+            }
+        }
+        .frame(maxWidth: .infinity, minHeight: 220)
+        .shadow(color: Color.cocoa.opacity(0.12), radius: 16, x: 0, y: 10)
+        .animation(.easeInOut(duration: 0.45), value: isFlipped)
+    }
+
+    private var front: some View {
+        VStack(spacing: 16) {
+            PresetIconView(name: preset.iconName, size: 380, tint: preset.tint)
+            Text(preset.title)
+                .font(.title2.bold())
+                .foregroundStyle(Color.cocoa)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var back: some View {
+        VStack(spacing: 16) {
+            Image("done")
+                .resizable()
+                .renderingMode(.original)
+                .scaledToFit()
+                .frame(width: 360, height: 360)
+            Text("Done")
+                .font(.title2.bold())
+                .foregroundStyle(Color.candyBlue)
+        }
+        .frame(maxWidth: .infinity)
     }
 }
 
@@ -1110,37 +996,54 @@ private struct PresetGridView: View {
     let onAdd: () -> Void
     let showsAddTile: Bool
     let disabled: Bool
+    let completedPresetIDsToday: Set<String>
 
     private let columns = [
-        GridItem(.flexible(), spacing: 10),
-        GridItem(.flexible(), spacing: 10)
+        GridItem(.flexible(), spacing: 14),
+        GridItem(.flexible(), spacing: 14)
     ]
 
     var body: some View {
-        LazyVGrid(columns: columns, spacing: 10) {
+        LazyVGrid(columns: columns, spacing: 14) {
             ForEach(presets) { preset in
                 Button {
                     if !disabled { onSelect(preset) }
                 } label: {
+                    let isDoneToday = completedPresetIDsToday.contains(preset.id)
                     VStack(spacing: 12) {
                         Spacer(minLength: 0)
-                        Image(systemName: preset.iconName)
-                            .font(.system(size: 40, weight: .bold))
-                        VStack(spacing: 4) {
-                            Text(preset.title)
-                                .font(.headline)
-                            Text(preset.durationLabel)
-                                .font(.subheadline.bold())
+                        ZStack {
+                            if isDoneToday {
+                                Image("done")
+                                    .resizable()
+                                    .renderingMode(.original)
+                                    .scaledToFit()
+                                    .frame(width: 150, height: 150)
+                                    .overlay(alignment: .bottomTrailing) {
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .font(.system(size: 28, weight: .bold))
+                                            .foregroundStyle(Color.candyBlue)
+                                            .background(Circle().fill(Color.cream))
+                                    }
+                            } else {
+                                PresetIconView(
+                                    name: preset.iconName,
+                                    size: 150,
+                                    tint: selectedPresetID == preset.id ? Color.white : Color.cocoa
+                                )
+                            }
                         }
+                        Text(preset.title)
+                            .font(.title3.bold())
                         Spacer(minLength: 0)
                     }
                     .frame(maxWidth: .infinity, minHeight: 152)
                     .padding(12)
-                    .background(selectedPresetID == preset.id ? preset.tint : Color.sky.opacity(0.82))
-                    .foregroundStyle(selectedPresetID == preset.id ? Color.white : Color.cocoa)
+                    .background(preset.tint.opacity(0.25))
+                    .foregroundStyle(Color.cocoa)
                     .overlay(
                         RoundedRectangle(cornerRadius: 22)
-                            .stroke(selectedPresetID == preset.id ? preset.tint : Color.candyBlue.opacity(0.12), lineWidth: 1)
+                            .stroke(preset.tint.opacity(0.35), lineWidth: 1)
                     )
                     .clipShape(RoundedRectangle(cornerRadius: 22))
                 }
@@ -1192,45 +1095,108 @@ private struct PresetGridView: View {
     }
 }
 
+private struct WeeklyDotsCard: View {
+    let days: [Date]
+    let logsByDay: [String: [HabitLog]]
+
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 7)
+    private let weekdaySymbols = ["日", "月", "火", "水", "木", "金", "土"]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 6) {
+                ForEach(weekdaySymbols, id: \.self) { label in
+                    Text(label)
+                        .font(.caption.bold())
+                        .foregroundStyle(Color.cocoa.opacity(0.6))
+                        .frame(maxWidth: .infinity)
+                }
+            }
+
+            LazyVGrid(columns: columns, spacing: 6) {
+                ForEach(days, id: \.self) { day in
+                    let count = logsByDay[ymdFormatter.string(from: day)]?.count ?? 0
+                    RoundedRectangle(cornerRadius: 5)
+                        .fill(fillColor(count: count))
+                        .frame(height: 28)
+                        .overlay {
+                            if count > 0 {
+                                let isPeta2 = count >= 2
+                                Image(isPeta2 ? "peta2" : "peta1")
+                                    .resizable()
+                                    .renderingMode(.original)
+                                    .scaledToFit()
+                                    .frame(width: isPeta2 ? 60 : 50, height: isPeta2 ? 60 : 50)
+                            }
+                        }
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(12)
+        .background(Color.sky.opacity(0.82))
+        .clipShape(RoundedRectangle(cornerRadius: 18))
+    }
+
+    private func fillColor(count: Int) -> Color {
+        switch count {
+        case 0:
+            return .grassEmpty
+        case 1:
+            return .grassLight
+        default:
+            return .grassDark
+        }
+    }
+}
+
 private struct InitialPresetPickerSheet: View {
-    let groups: [InitialPresetGroup]
-    let onSelect: (InitialPresetGroup) -> Void
-    @State private var selectedGroupID: String?
+    let presets: [HabitPreset]
+    let onSelect: ([HabitPreset]) -> Void
+    let onSkip: () -> Void
+    @State private var selectedIDs: Set<String> = []
+    private let maxSelection = 6
 
     var body: some View {
         NavigationStack {
-            VStack(alignment: .leading, spacing: 16) {
-                Text("最初にえらんでね")
-                    .font(.title3.bold())
-                    .foregroundStyle(Color.cocoa)
+            VStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("最初にえらんでね")
+                        .font(.title3.bold())
+                        .foregroundStyle(Color.cocoa)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-                Text("やりたい方向を1つえらぶと、最初のやることがセットされるよ。")
-                    .font(.subheadline)
-                    .foregroundStyle(Color.cocoa.opacity(0.7))
-
-                ForEach(groups) { group in
-                    Button {
-                        selectedGroupID = group.id
-                    } label: {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(group.title)
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 16) {
+                        ForEach(presets) { preset in
+                            Button {
+                                toggleSelection(for: preset.id)
+                            } label: {
+                        HStack(spacing: 12) {
+                            PresetIconView(name: preset.iconName, size: 72, tint: preset.tint)
+                                .frame(width: 72)
+                            Text(preset.title)
                                 .font(.headline)
-                                .foregroundStyle(selectedGroupID == group.id ? .white : Color.cocoa)
+                                .foregroundStyle(Color.cocoa)
+                            Spacer()
+                            Image(systemName: selectedIDs.contains(preset.id) ? "checkmark.circle.fill" : "circle")
+                                .font(.title3)
+                                .foregroundStyle(selectedIDs.contains(preset.id) ? Color.candyBlue : Color.cocoa.opacity(0.3))
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(14)
-                        .background(selectedGroupID == group.id ? Color.candyBlue : Color.sky.opacity(0.82))
-                        .clipShape(RoundedRectangle(cornerRadius: 18))
+                                .padding(14)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(Color.sky.opacity(0.82))
+                                .clipShape(RoundedRectangle(cornerRadius: 18))
+                            }
+                            .buttonStyle(.plain)
+                        }
                     }
-                    .buttonStyle(.plain)
                 }
 
-                Spacer()
-
                 Button {
-                    guard let selectedGroupID,
-                          let group = groups.first(where: { $0.id == selectedGroupID }) else { return }
-                    onSelect(group)
+                    let selected = presets.filter { selectedIDs.contains($0.id) }
+                    onSelect(selected)
                 } label: {
                     Text("けってい")
                         .font(.headline.bold())
@@ -1239,11 +1205,29 @@ private struct InitialPresetPickerSheet: View {
                         .foregroundStyle(.white)
                         .clipShape(RoundedRectangle(cornerRadius: 18))
                 }
-                .disabled(selectedGroupID == nil)
-                .opacity(selectedGroupID == nil ? 0.45 : 1)
+                .disabled(selectedIDs.isEmpty)
+                .opacity(selectedIDs.isEmpty ? 0.45 : 1)
+
+                Button("あとで") {
+                    onSkip()
+                }
+                .font(.subheadline.bold())
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 4)
+                Text("最大\(maxSelection)個までえらべるよ")
+                    .font(.caption)
+                    .foregroundStyle(Color.cocoa.opacity(0.6))
             }
             .padding(20)
             .navigationTitle("")
+        }
+    }
+
+    private func toggleSelection(for id: String) {
+        if selectedIDs.contains(id) {
+            selectedIDs.remove(id)
+        } else if selectedIDs.count < maxSelection {
+            selectedIDs.insert(id)
         }
     }
 }
@@ -1251,13 +1235,8 @@ private struct InitialPresetPickerSheet: View {
 private struct PresetEditorSheet: View {
     @State private var showingDeleteConfirmation = false
     @Binding var title: String
-    @Binding var minutes: Int
-    @Binding var tracksTime: Bool
     @Binding var iconName: String
     @Binding var tint: PresetTint
-    @Binding var isWriting: Bool
-    let isEditing: Bool
-    let canDelete: Bool
     let onSave: () -> Void
     let onDelete: () -> Void
     let onCancel: () -> Void
@@ -1272,36 +1251,26 @@ private struct PresetEditorSheet: View {
 
                         TextField("やること", text: $title)
                             .textFieldStyle(.roundedBorder)
-
-                        Toggle("時間をはかる", isOn: $tracksTime)
-                        Toggle("ノートを使う", isOn: $isWriting)
-
-                        if tracksTime {
-                            Stepper("\(minutes)分", value: $minutes, in: 1...15)
-                                .padding(12)
-                                .background(Color.sky.opacity(0.72))
-                                .clipShape(RoundedRectangle(cornerRadius: 14))
-                        }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                     VStack(alignment: .leading, spacing: 12) {
                         Text("アイコン")
                             .font(.headline)
-                        let iconColumns = [
-                            GridItem(.adaptive(minimum: 56), spacing: 12)
-                        ]
+                        let iconColumns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 3)
                         LazyVGrid(columns: iconColumns, spacing: 12) {
                             ForEach(presetIcons, id: \.self) { icon in
                                 Button {
                                     iconName = icon
                                 } label: {
-                                    Image(systemName: icon)
-                                        .font(.system(size: 26, weight: .semibold))
-                                        .frame(width: 56, height: 56)
-                                        .background(iconName == icon ? Color.candyBlue : Color.sky.opacity(0.72))
-                                        .foregroundStyle(iconName == icon ? Color.white : Color.candyBlue)
-                                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                                    PresetIconView(
+                                        name: icon,
+                                        size: 92,
+                                        tint: iconName == icon ? Color.white : Color.candyBlue
+                                    )
+                                    .frame(width: 96, height: 96)
+                                    .background(iconName == icon ? Color.candyBlue : Color.sky.opacity(0.72))
+                                    .clipShape(RoundedRectangle(cornerRadius: 24))
                                 }
                                 .buttonStyle(.plain)
                             }
@@ -1339,19 +1308,15 @@ private struct PresetEditorSheet: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                     HStack(spacing: 12) {
-                        if isEditing {
-                            Button {
-                                showingDeleteConfirmation = true
-                            } label: {
-                                Text("けす")
-                                    .font(.headline.bold())
-                                    .frame(maxWidth: .infinity, minHeight: 52)
-                                    .background(Color.peach)
-                                    .foregroundStyle(.white)
-                                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                            }
-                            .disabled(!canDelete)
-                            .opacity(canDelete ? 1 : 0.45)
+                        Button {
+                            showingDeleteConfirmation = true
+                        } label: {
+                            Text("けす")
+                                .font(.headline.bold())
+                                .frame(maxWidth: .infinity, minHeight: 52)
+                                .background(Color.peach)
+                                .foregroundStyle(.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 16))
                         }
 
                         Button(action: onSave) {
@@ -1368,7 +1333,7 @@ private struct PresetEditorSheet: View {
                 }
                 .padding(20)
             }
-            .navigationTitle(isEditing ? "やることをへんしゅう" : "やることをついか")
+            .navigationTitle("やることをへんしゅう")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("やめる", action: onCancel)
@@ -1396,7 +1361,7 @@ private struct HabitGrassCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("できた日")
+            Text("できたのあしあと")
                 .font(.headline)
 
             LazyVGrid(columns: columns, spacing: 6) {
@@ -1421,6 +1386,16 @@ private struct HabitGrassCard: View {
                                 RoundedRectangle(cornerRadius: 6)
                                     .stroke(isSameDay(day, selectedDate) ? Color.cocoa.opacity(0.35) : .clear, lineWidth: 2)
                             )
+                            .overlay {
+                                if count > 0 {
+                                    let isPeta2 = count >= 2
+                                    Image(isPeta2 ? "peta2" : "peta1")
+                                        .resizable()
+                                        .renderingMode(.original)
+                                        .scaledToFit()
+                                        .frame(width: isPeta2 ? 60 : 50, height: isPeta2 ? 60 : 50)
+                                }
+                            }
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel(dayTitleFormatter.string(from: day))
@@ -1449,16 +1424,16 @@ private struct HabitGrassCard: View {
     private func isSameDay(_ lhs: Date, _ rhs: Date) -> Bool {
         ymdFormatter.string(from: lhs) == ymdFormatter.string(from: rhs)
     }
+
 }
 
 private struct DayLogListCard: View {
     @State private var pendingDeleteLog: HabitLog?
     let date: Date
     let logs: [HabitLog]
-    let noteText: String
+    let iconForLog: (HabitLog) -> (name: String, tint: Color)
     let canAdd: Bool
     let onAdd: () -> Void
-    let onNote: () -> Void
     let onDelete: (HabitLog) -> Void
 
     var body: some View {
@@ -1482,20 +1457,22 @@ private struct DayLogListCard: View {
                     .foregroundStyle(Color.cocoa.opacity(0.6))
             } else {
                 ForEach(logs) { log in
-                    HStack {
+                    HStack(spacing: 12) {
                         Text(logTimeFormatter.string(from: log.completedAt))
                             .font(.headline.monospacedDigit())
                             .foregroundStyle(Color.cocoa.opacity(0.7))
-                            .frame(width: 52, alignment: .leading)
+                            .frame(width: 60, alignment: .leading)
+
+                        let iconInfo = iconForLog(log)
+                        PresetIconView(name: iconInfo.name, size: 60, tint: iconInfo.tint)
+                            .frame(width: 28, height: 28)
+                            .padding(.horizontal, 4)
 
                         VStack(alignment: .leading, spacing: 2) {
                             Text(log.title)
                                 .font(.headline)
                         }
                         Spacer()
-                        Text(minutesText(for: log))
-                            .font(.caption.bold())
-                            .foregroundStyle(Color.candyBlue)
                         Button {
                             pendingDeleteLog = log
                         } label: {
@@ -1506,42 +1483,10 @@ private struct DayLogListCard: View {
                         }
                         .buttonStyle(.plain)
                     }
-                    .padding(.vertical, 4)
+                    .padding(.vertical, 10)
                 }
             }
 
-            Button {
-                onNote()
-            } label: {
-                VStack(alignment: .leading, spacing: 6) {
-                    HStack {
-                        Text("ノート")
-                            .font(.headline)
-                            .foregroundStyle(Color.cocoa)
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                            .font(.caption.bold())
-                            .foregroundStyle(Color.candyBlue)
-                    }
-                    if noteText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                        Text("まだノートがないよ")
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(Color.cocoa.opacity(0.6))
-                    } else {
-                        Text(noteText)
-                            .font(.subheadline)
-                            .foregroundStyle(Color.cocoa.opacity(0.75))
-                            .lineLimit(2)
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(12)
-                .background(Color.cream.opacity(0.9))
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-            }
-            .buttonStyle(.plain)
-            .disabled(!canAdd)
-            .opacity(canAdd ? 1 : 0.45)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(14)
@@ -1563,12 +1508,6 @@ private struct DayLogListCard: View {
         }
     }
 
-    private func minutesText(for log: HabitLog) -> String {
-        if log.actualMinutes == 0 {
-            return "記録だけ"
-        }
-        return "\(log.actualMinutes)分"
-    }
 }
 
 private struct AddLogSheet: View {
@@ -1588,15 +1527,10 @@ private struct AddLogSheet: View {
                         onAdd(preset)
                     } label: {
                         HStack {
-                            Image(systemName: preset.iconName)
-                                .font(.headline)
-                                .foregroundStyle(preset.tint)
+                            PresetIconView(name: preset.iconName, size: 28, tint: preset.tint)
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(preset.title)
                                     .font(.headline)
-                                Text(preset.durationLabel)
-                                    .font(.subheadline.bold())
-                                    .foregroundStyle(Color.candyBlue)
                             }
                             Spacer()
                             Image(systemName: "plus.circle.fill")
@@ -1623,196 +1557,6 @@ private struct AddLogSheet: View {
     }
 }
 
-private struct DailyNoteSheet: View {
-    let date: Date
-    let presetTitle: String?
-    let remainingSeconds: Int?
-    let totalSeconds: Int?
-    let isRunning: Bool
-    @Binding var text: String
-    let onClose: () -> Void
-
-    var body: some View {
-        NavigationStack {
-            VStack(alignment: .leading, spacing: 16) {
-                Text(dayTitleFormatter.string(from: date))
-                    .font(.headline)
-                    .foregroundStyle(Color.cocoa)
-
-                if let presetTitle {
-                    Text(presetTitle)
-                        .font(.title3.bold())
-                        .foregroundStyle(Color.candyBlue)
-                }
-
-                if let totalSeconds {
-                    let displaySeconds = isRunning ? (remainingSeconds ?? totalSeconds) : totalSeconds
-                    HStack(spacing: 8) {
-                        Image(systemName: "timer")
-                        Text(formattedTime(displaySeconds))
-                            .monospacedDigit()
-                    }
-                    .font(.subheadline.bold())
-                    .foregroundStyle(Color.cocoa)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(Color.sky.opacity(0.8))
-                    .clipShape(Capsule())
-                }
-
-                TextEditor(text: $text)
-                    .frame(minHeight: 240)
-                    .padding(10)
-                    .background(Color.cream.opacity(0.9))
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(Color.candyBlue.opacity(0.15), lineWidth: 1)
-                    )
-
-                Spacer()
-            }
-            .padding(20)
-            .navigationTitle("ノート")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("とじる", action: onClose)
-                }
-            }
-        }
-    }
-
-    private func formattedTime(_ total: Int) -> String {
-        let value = max(total, 0)
-        let minutes = value / 60
-        let seconds = value % 60
-        return String(format: "%02d:%02d", minutes, seconds)
-    }
-}
-
-
-private struct CelebrationView: View {
-    let totalDays: Int
-    let streakDays: Int
-    let title: String
-    let minutesText: String
-    let onClose: () -> Void
-
-    var body: some View {
-        ZStack {
-            LinearGradient(
-                colors: [Color.sunshine.opacity(0.88), Color.roseCloud, Color.cream],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-
-            VStack(spacing: 26) {
-                Spacer()
-
-                Group {
-                    #if canImport(UIKit)
-                    if let uiImage = UIImage(named: "hanamaru") {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .scaledToFit()
-                            .blendMode(.multiply)
-                            .compositingGroup()
-                    } else {
-                        Text("💮")
-                            .font(.system(size: 172))
-                    }
-                    #else
-                    Text("💮")
-                        .font(.system(size: 172))
-                    #endif
-                }
-                .frame(width: 260, height: 260)
-
-                Text("できた！")
-                    .font(.system(size: 38, weight: .heavy, design: .rounded))
-                    .foregroundStyle(Color.candyBlue)
-
-                VStack(spacing: 8) {
-                    Text("\(title) ・ \(minutesText)")
-                        .font(.title3.bold())
-                        .foregroundStyle(Color.candyBlue)
-                    Text("\(totalDays)日目の記録")
-                        .font(.title3.bold())
-                    Text("連続 \(streakDays) 日")
-                        .font(.title2.weight(.heavy))
-                        .foregroundStyle(Color.peach)
-                }
-                .foregroundStyle(Color.cocoa)
-
-                Spacer()
-
-                Button(action: onClose) {
-                    Text("とじる")
-                        .font(.title3.bold())
-                        .frame(maxWidth: .infinity, minHeight: 60)
-                        .background(Color.candyBlue)
-                        .foregroundStyle(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 18))
-                }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 32)
-            }
-        }
-    }
-}
-
-
-private struct CircularTimerView: View {
-    let remainingSeconds: Int
-    let totalSeconds: Int
-    let isRunning: Bool
-    let accentColor: Color
-
-    private var progress: Double {
-        guard totalSeconds > 0 else { return 0 }
-        return Double(max(min(remainingSeconds, totalSeconds), 0)) / Double(totalSeconds)
-    }
-
-    var body: some View {
-        ZStack {
-            Circle()
-                .stroke(accentColor.opacity(0.14), lineWidth: 16)
-
-            Circle()
-                .trim(from: 0, to: 1 - progress)
-                .stroke(accentColor, style: StrokeStyle(lineWidth: 16, lineCap: .round, lineJoin: .round))
-                .rotationEffect(.degrees(-90))
-                .shadow(color: accentColor.opacity(0.2), radius: 8, x: 0, y: 4)
-
-            VStack(spacing: 6) {
-                Text(displayTimeString(from: remainingSeconds))
-                    .font(.system(size: 38, weight: .heavy, design: .rounded))
-                    .monospacedDigit()
-                    .foregroundStyle(Color.cocoa)
-
-                Text(statusText)
-                    .font(.headline)
-                    .foregroundStyle(accentColor)
-            }
-        }
-        .animation(.easeInOut(duration: 0.2), value: progress)
-    }
-
-    private var statusText: String {
-        if isRunning && remainingSeconds <= 0 {
-            return "おわっても続けてる"
-        }
-        return isRunning ? "ちょいだけ集中" : "じゅんびOK"
-    }
-
-    private func displayTimeString(from total: Int) -> String {
-        let value = abs(total)
-        let minutes = value / 60
-        let seconds = value % 60
-        return String(format: "%02d:%02d", minutes, seconds)
-    }
-}
 
 #Preview {
     ContentView()

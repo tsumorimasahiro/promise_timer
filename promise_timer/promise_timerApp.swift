@@ -7,9 +7,12 @@
 
 import SwiftUI
 import GoogleMobileAds
+import WidgetKit
 
 @main
 struct promise_timerApp: App {
+    @Environment(\.scenePhase) private var scenePhase
+
     init() {
         MobileAds.shared.start(completionHandler: nil)
     }
@@ -17,6 +20,11 @@ struct promise_timerApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+        }
+        .onChange(of: scenePhase) { phase in
+            if phase == .background {
+                WidgetCenter.shared.reloadTimelines(ofKind: "PromiseTimerHabitCardWidget")
+            }
         }
     }
 }
