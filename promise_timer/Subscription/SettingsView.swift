@@ -39,6 +39,8 @@ struct SettingsView: View {
                             openURL(url)
                         }
                     }
+                } footer: {
+                    Text("アイコンのご要望・追加依頼など、お気軽にご連絡ください。")
                 }
             }
             .navigationTitle("設定")
