@@ -1,0 +1,21 @@
+[
+  {
+    "timedSessionIDs": [
+      "545BA5D4-923B-43DB-B4C4-88AF63BCACA0",
+      "D268BBCF-B8DD-4C40-97C7-3986B4110D9A"
+    ],
+    "id": "545BA5D4-923B-43DB-B4C4-88AF63BCACA0",
+    "presetID": "readingPage",
+    "completedAt": "2026-10-23T22:29:59Z",
+    "title": "本を1ページ読む",
+    "durationSeconds": 85.01523506641388
+  },
+  {
+    "completedAt": "2026-10-23T22:32:15Z",
+    "title": "水を飲む",
+    "timedSessionIDs": [],
+    "id": "17ED0027-0A40-40C5-BE7B-34C064DF1713",
+    "presetID": "water"
+  }
+]
+Active session cleared.

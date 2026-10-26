@@ -14,8 +14,12 @@ struct PaywallSheet: View {
                         Button("閉じる") {
                             isPresented = false
                         }
+                        .font(pochiPixelFont(12))
+                        .tint(Color.grassDark)
                     }
                 }
+                .toolbarBackground(Color.cream, for: .navigationBar)
+                .toolbarBackground(.visible, for: .navigationBar)
         }
         .task {
             await subscriptionManager.refreshEntitlements()

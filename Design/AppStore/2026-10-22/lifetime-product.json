@@ -1,0 +1,58 @@
+{
+  "status": "waiting_for_review",
+  "appID": "6760613210",
+  "productID": "promise_timer.premium.lifetime",
+  "type": "NON_CONSUMABLE",
+  "referenceName": "Pochi Premium Lifetime",
+  "baseTerritory": "JPN",
+  "requestedCustomerPriceJPY": 3900,
+  "priceVerifiedInAppStoreConnect": true,
+  "localizations": {
+    "ja": {
+      "name": "ぽちログ プレミアム",
+      "description": "広告非表示と追加犬種を、一度の購入で。自動更新はありません。"
+    },
+    "en-US": {
+      "name": "PupHabit Premium",
+      "description": "Remove ads and unlock extra breeds. One-time purchase."
+    },
+    "ko": {
+      "name": "PupHabit 프리미엄",
+      "description": "한 번 구매로 광고 제거와 추가 견종을 이용하세요. 자동 갱신은 없어요."
+    },
+    "zh-Hans": {
+      "name": "PupHabit 高级版",
+      "description": "一次购买，移除广告并解锁更多犬种。无自动续费。"
+    },
+    "zh-Hant": {
+      "name": "PupHabit 進階版",
+      "description": "一次購買，移除廣告並解鎖更多犬種。無自動續訂。"
+    }
+  },
+  "legacyProducts": [
+    "promise_timer.monthly",
+    "promise_timer.yearly"
+  ],
+  "legacyPolicy": "User consented to stopping both subscriptions after disclosure of Apple service-through-billing-cycle/refund terms. Both removed from sale; verified Developer Removed from Sale and 0/175 territories. Existing active entitlement handling retained.",
+  "submission": "User authorized review submission; app 1.04 (64) and lifetime IAP submitted together on 2026-10-23 00:15 JST.",
+  "appleProductID": "6825802653",
+  "requestedOverseasEquivalentJPY": 5900,
+  "overseasPriceUpdated": true,
+  "allTerritoriesExplicitlyAuthorized": true,
+  "availabilitySaved": true,
+  "savedLocalizations": [
+    "ja",
+    "en-US",
+    "ko",
+    "zh-Hans",
+    "zh-Hant"
+  ],
+  "priceNote": "Saved and reopened: Japan JPY 3900, 174 overseas territories use Apple equivalents of JPY 5900; US USD 39.99. Overseas prices manually managed.",
+  "legacyStopped": true,
+  "legacyAppleProductIDs": {
+    "monthly": "6760938401",
+    "yearly": "6760938390"
+  },
+  "reviewScreenshot": "premium-review-en-local.png",
+  "reviewSubmissionID": "4ae3e758-440a-4bb2-82ae-a2c586e7088e"
+}

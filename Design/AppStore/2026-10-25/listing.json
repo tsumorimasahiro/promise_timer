@@ -1,0 +1,87 @@
+{
+  "ja": {
+    "name": "ぽちと筋トレ",
+    "subtitle": "ドット絵のわんこと続ける筋トレ記録",
+    "promotionalText": "腕立て、スクワット、腹筋、プランク。ぽちと一緒に体を動かそう。種目と回数・時間を選んでスタート、終わったらそのまま記録。",
+    "description": "ぽちと一緒に、今日の筋トレ。\n\n「ぽちと筋トレ」は、ドット絵のわんこと一緒に筋トレを続けるアプリです。種目を選んで始めると、ぽちも犬らしい動きで一緒にがんばります。\n\n■ 選んですぐにスタート\n腕立て伏せ、スクワット、腹筋、プランク、サイドプランク、バードドッグ、デッドバグ、ランジ、ダンベル、ヒップリフト、かかと上げを用意。回数・時間を自分に合わせて設定できます。自分で名前をつけた種目も追加できます。\n\n■ 回数も、時間も\n回数で行う筋トレは、終わったらボタンひとつで設定した回数を保存。プランクなどはタイマーで計測し、時間が来たら自分で終了して記録できます。効果音は設定で切り替えられます。\n\n■ ぽちは、いつもそばに\n名前と毛色を選んで、自分の相棒に。筋トレ中は一緒に体を動かし、お休み中はのんびり過ごします。\n\n■ できた日を振り返る\nカレンダーで筋トレの記録を確認。筋トレをした日は、運動中のぽちの一枚も残せます。ウィジェットから、保存した種目をすぐに始められます。\n\n基本機能は無料で、広告が表示されます。買い切りのプレミアムでは、広告非表示とダルメシアン・ポメラニアンを利用できます。自動更新はありません。価格はアプリ内の購入画面でご確認ください。\n\n本アプリは運動の記録と継続を楽しむためのアプリです。犬のアニメーションは人の運動フォームを指導するものではありません。\n\nTerms of Use (EULA): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/",
+    "keywords": "筋トレ,記録,自重,宅トレ,プランク,腹筋,スクワット,腕立て,タイマー,トレーニング,犬,ドット絵,運動,フィットネス,ウィジェット",
+    "whatsNew": "「ぽちと筋トレ」としてリニューアルしました。\n・種目を選んで、ぽちと一緒に筋トレを開始\n・回数の記録、プランクなどのタイマーに対応\n・基本の種目と自分で作る種目の設定\n・筋トレ中のぽちの動きと効果音\n・ウィジェットからすぐにスタート",
+    "headlines": [
+      "ぽちと一緒に、\n今日の筋トレ。",
+      "種目を選んで、\nすぐにスタート。",
+      "プランクも、\n一緒にがんばろう。",
+      "できた分を、\nそのまま記録。",
+      "名前も、毛色も、\nあなた好みに。",
+      "回数も時間も、\n自分のペースで。"
+    ],
+    "marketingURL": "https://tsumorimasahiro.github.io/app-ads.txt"
+  },
+  "en-US": {
+    "name": "Workout with Pochi",
+    "subtitle": "A pixel pup, your workout pal",
+    "promotionalText": "Push-ups, squats, crunches and planks—with a pixel pup by your side. Choose an exercise, set your reps or time, and save when you finish.",
+    "description": "Your workout, with Pochi.\n\nWorkout with Pochi helps you keep moving with a little pixel dog by your side. Choose an exercise and your pup joins in with playful, dog-like movements.\n\nPICK AN EXERCISE AND START\nChoose push-ups, squats, crunches, planks, side planks, bird dogs, dead bugs, lunges, dumbbells, hip bridges or calf raises. Adjust your reps or time, or add an exercise with your own name.\n\nREPS OR A TIMER\nFor rep-based exercises, finish with one tap to save your planned reps. Use a timer for planks and other timed exercises, then finish and save yourself when the timer ends. Optional sounds mark the start, final countdown, timer end and saved record.\n\nA PUP BY YOUR SIDE\nChoose a name and coat color. Your pup moves with you during training and relaxes between workouts.\n\nLOOK BACK ON WHAT YOU DID\nReview your workouts in the calendar and keep a picture of your pup from training days. Start a saved exercise straight from the widget.\n\nCore features are free with ads. A one-time Premium purchase removes ads and unlocks the Dalmatian and Pomeranian breeds. There is no auto-renewal. See the in-app purchase screen for local pricing.\n\nThis app is for workout logging and motivation. Dog animations do not demonstrate human exercise form.\n\nTerms of Use (EULA): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/",
+    "keywords": "workout,fitness,strength,plank,pushup,squat,crunch,reps,timer,log,tracker,dog,pixel,exercise,widget",
+    "whatsNew": "Meet Workout with Pochi, redesigned for strength training.\n• Pick an exercise and train with your pup\n• Save reps or use a timer for planks and core exercises\n• Edit built-in exercises and add your own\n• New workout movements and optional sound cues\n• Start a workout straight from the widget",
+    "headlines": [
+      "Your workout.\nYour little pup.",
+      "Pick an exercise.\nStart together.",
+      "Finish your plank.\nSave with one tap.",
+      "Finish your workout.\nSave with one tap.",
+      "A name and a coat\nto call your own.",
+      "Your reps. Your time.\nYour own pace."
+    ],
+    "marketingURL": "https://tsumorimasahiro.github.io/app-ads.txt"
+  },
+  "ko": {
+    "name": "포치랑 운동",
+    "subtitle": "픽셀 강아지와 함께하는 근력 운동 기록",
+    "promotionalText": "팔굽혀펴기, 스쿼트, 복근 운동, 플랭크. 포치와 함께 움직여 보세요. 운동과 횟수·시간을 선택하고, 끝나면 바로 기록해요.",
+    "description": "오늘의 근력 운동도 포치와 함께.\n\n포치랑 운동은 도트 그림 강아지와 함께 근력 운동을 이어 가는 앱이에요. 운동을 고르면 포치도 강아지다운 움직임으로 함께해요.\n\n운동을 골라 바로 시작\n팔굽혀펴기, 스쿼트, 복근 운동, 플랭크, 사이드 플랭크, 버드독, 데드버그, 런지, 덤벨, 힙 리프트, 종아리 올리기를 준비했어요. 횟수와 시간을 바꾸거나 직접 이름을 붙인 운동을 추가할 수 있어요.\n\n횟수 기록과 타이머\n횟수 운동은 끝나면 버튼 한 번으로 설정한 횟수를 저장해요. 플랭크 등은 타이머를 쓰고, 시간이 끝나면 직접 종료해 기록해요. 효과음은 설정에서 켜고 끌 수 있어요.\n\n이름과 털 색을 골라 나만의 강아지를 만나 보세요. 운동 중에는 함께 움직이고, 쉬는 동안에는 느긋하게 지내요. 달력으로 운동을 확인하고, 운동한 날에는 포치의 사진도 남겨요. 위젯에서 저장한 운동을 바로 시작할 수 있어요.\n\n기본 기능은 광고와 함께 무료예요. 프리미엄을 한 번 구매하면 광고가 사라지고 달마시안과 포메라니안을 선택할 수 있어요. 자동 갱신은 없으며 가격은 앱 내 구매 화면에서 확인해 주세요.\n\n운동 기록과 꾸준한 실천을 돕는 앱이에요. 강아지 애니메이션은 사람의 운동 자세를 지도하지 않아요.\n\nTerms of Use (EULA): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/",
+    "keywords": "운동,근력,홈트,기록,플랭크,스쿼트,복근,타이머,강아지,픽셀,위젯,팔굽혀펴기",
+    "whatsNew": "포치랑 운동으로 새롭게 바뀌었어요.\n• 운동을 골라 강아지와 함께 시작\n• 횟수 기록과 플랭크 타이머\n• 기본 운동 수정 및 나만의 운동 추가\n• 운동 동작과 효과음\n• 위젯에서 바로 운동 시작",
+    "headlines": [
+      "오늘의 운동도\n포치와 함께",
+      "운동을 고르고\n바로 시작해요",
+      "플랭크도\n같이 버텨 봐요",
+      "운동이 끝나면\n한 번에 기록",
+      "이름도 털 색도\n내 취향대로",
+      "횟수도 시간도\n나만의 속도로"
+    ],
+    "marketingURL": "https://tsumorimasahiro.github.io/app-ads.txt"
+  },
+  "zh-Hans": {
+    "name": "和波奇一起健身",
+    "subtitle": "像素小狗陪你训练，记录每次努力",
+    "promotionalText": "俯卧撑、深蹲、卷腹、平板支撑，和波奇一起动起来。选择动作，设置次数或时间，完成后轻松记录。",
+    "description": "今天的训练，也和波奇一起。\n\n和波奇一起健身是一款由像素小狗陪伴你的力量训练记录应用。选择动作后，波奇也会用小狗的动作陪你一起努力。\n\n内置俯卧撑、深蹲、卷腹、平板支撑、侧平板支撑、鸟狗式、死虫式、弓步、哑铃、臀桥和提踵。可以调整次数或时间，也可以自行命名并添加动作。\n\n次数训练完成后，轻点按钮即可保存预设次数。平板支撑等动作可使用计时器，时间结束后由你点击结束并保存。音效可在设置中开关。\n\n为小狗取名、选择毛色。训练时陪你动起来，休息时悠闲度过。通过日历查看训练记录。在训练日，还能留下一张运动中的波奇照片。通过小组件可以直接开始已保存的动作。\n\n基本功能免费，应用内含广告。一次性购买高级版可移除广告，并解锁斑点狗和博美犬。无自动续费，价格请查看应用内购买页面。\n\n本应用用于记录训练和鼓励坚持。小狗动画不用于指导人体运动姿势。\n\nTerms of Use (EULA): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/",
+    "keywords": "健身,力量,训练,记录,平板支撑,深蹲,俯卧撑,卷腹,计时器,小狗,像素,运动,小组件,居家",
+    "whatsNew": "全新升级为和波奇一起健身。\n・选择动作，和小狗一起训练\n・记录次数，使用平板支撑等计时器\n・编辑内置动作，添加自定义动作\n・训练动画和可选音效\n・通过小组件快速开始",
+    "headlines": [
+      "今天也和波奇\n一起训练",
+      "选择动作\n马上开始",
+      "平板支撑\n也一起坚持",
+      "完成训练\n轻松记录",
+      "名字和毛色\n由你来选",
+      "次数与时间\n按自己的节奏"
+    ],
+    "marketingURL": "https://tsumorimasahiro.github.io/app-ads.txt"
+  },
+  "zh-Hant": {
+    "name": "和波奇一起健身",
+    "subtitle": "像素小狗陪你訓練，記錄每次努力",
+    "promotionalText": "伏地挺身、深蹲、捲腹、棒式，和波奇一起動起來。選擇動作，設定次數或時間，完成後輕鬆記錄。",
+    "description": "今天的訓練，也和波奇一起。\n\n和波奇一起健身是一款由像素小狗陪伴你的肌力訓練記錄 App。選擇動作後，波奇也會用小狗的動作陪你一起努力。\n\n內建伏地挺身、深蹲、捲腹、棒式、側棒式、鳥狗式、死蟲式、弓箭步、啞鈴、臀橋和提踵。可以調整次數或時間，也可以自行命名並新增動作。\n\n次數訓練完成後，輕點按鈕即可儲存預設次數。棒式等動作可使用計時器，時間結束後由你點擊結束並儲存。音效可在設定中開關。\n\n為小狗取名、選擇毛色。訓練時陪你動起來，休息時悠閒度過。透過日曆查看訓練記錄。在訓練日，還能留下一張運動中的波奇照片。透過小工具可以直接開始已儲存的動作。\n\n基本功能免費，App 內含廣告。一次購買進階版即可移除廣告，並解鎖大麥町犬和博美犬。無自動續訂，價格請查看 App 內購買頁面。\n\n本 App 用於記錄訓練和鼓勵持續運動。小狗動畫不用於指導人體運動姿勢。\n\nTerms of Use (EULA): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/",
+    "keywords": "健身,肌力,訓練,記錄,棒式,深蹲,伏地挺身,捲腹,計時器,小狗,像素,運動,小工具,居家",
+    "whatsNew": "全新升級為和波奇一起健身。\n・選擇動作，和小狗一起訓練\n・記錄次數，使用棒式等計時器\n・編輯內建動作，新增自訂動作\n・訓練動畫和可選音效\n・透過小工具快速開始",
+    "headlines": [
+      "今天也和波奇\n一起訓練",
+      "選擇動作\n馬上開始",
+      "棒式訓練\n也一起堅持",
+      "完成訓練\n輕鬆記錄",
+      "名字和毛色\n由你來選",
+      "次數與時間\n照自己的步調"
+    ],
+    "marketingURL": "https://tsumorimasahiro.github.io/app-ads.txt"
+  }
+}

@@ -1,0 +1,775 @@
+/* Localized app strings. */
+"選んだテーマ" = "Chosen themes";
+"ホーム" = "Home";
+"きろく" = "History";
+"設定" = "Settings";
+"今日のちいさな約束" = "Today’s small promises";
+"できたらカードをタップして、%@に教えてね" = "Tap a card when you finish and tell %@";
+"自分との約束が、%@との絆に" = "Your promises bring you closer to %@";
+"%@と%@" = "%@ · %@";
+"%@のなまえや見た目を変える" = "Edit %@’s name and appearance";
+"%@との絆をシェア" = "Share your bond with %@";
+"%@との絆" = "Your bond with %@";
+"%@との絆の進み具合" = "Bond progress with %@";
+"今週 %@ / %@ 回" = "This week: %@ / %@";
+"今日 %@こ" = "Today: %@";
+"これからよろしくね" = "Let’s be friends!";
+"おともだち" = "Friends";
+"なかよし" = "Besties";
+"だいじな相棒" = "Dear companions";
+"ずっと一緒" = "Together forever";
+"おうちのまえ" = "Home";
+"ちいさな公園" = "Little Park";
+"花の丘" = "Flower Hill";
+"海辺" = "Seaside";
+"夕やけ道" = "Sunset Path";
+"%@「まずは約束をひとつ決めてみよう」" = "%@ “Let’s choose one small promise to start.”";
+"%@「今日も一緒にできたね。うれしいな」" = "%@ “We did it together today. I’m so happy!”";
+"%@「今週の目標達成！すごいね」" = "%@ “You reached this week’s goal! Amazing!”";
+"%@「できた分だけ、絆も育つよ」" = "%@ “Every little step makes our bond grow.”";
+"次の景色まで あと%@こ" = "%@ more to unlock the next place";
+"すてきな相棒になったよ" = "You’re wonderful companions!";
+"いっぱい" = "Max bond";
+"新しい散歩先「%@」が増えたよ！" = "A new walk spot, “%@,” is open!";
+"%@が起きて、あいさつしてくれたよ！" = "%@ woke up to say hello!";
+"今日の約束で、%@との絆が育ったよ。" = "Today’s promise brought you closer to %@.";
+"ふたりで育てているもの" = "Growing together";
+"できた分だけ育つよ" = "Every step helps it grow";
+"約束を選ぶと、ここにぽちの宝物が増えていくよ" = "Choose a promise to start collecting little treasures with Pochi.";
+"%@/%@" = "%@/%@";
+"%@、今週 %@ / %@ 回、成長 %@ / 3" = "%@, this week %@ / %@, growth %@ / 3";
+"わたしと%@の%@" = "My story with %@: %@";
+"ふたりで育てた絆  %@" = "Our growing bond  %@";
+"できた分だけ、ぽちとの絆に。   #ぽちログ" = "Every little promise brings us closer. #WorkoutWithPochi";
+"ふたりで育てた絆" = "Our growing bond";
+"なまえ" = "Name";
+"ぽち" = "Pochi";
+"いつでも変えられるよ" = "You can change it anytime";
+"首輪の色" = "Collar color";
+"チャーム" = "Charm";
+"とじる" = "Done";
+"ぽちのプロフィール" = "Pochi’s profile";
+"タップで記録" = "Tap to log";
+"できた" = "Done";
+"やめる" = "Cancel";
+"%@に伝えた！" = "You told %@!";
+"週 %@ / %@ 回" = "This week %@ / %@";
+"ついか" = "Add";
+"やること" = "Promise";
+"今週の足あと" = "This week";
+"できた日がふえていくよ" = "Every completed day leaves a pawprint";
+"すべて" = "All";
+"ぽちと続けたいことを選ぼう" = "Choose what you’d like to keep doing with Pochi";
+"できた分だけ、ぽちとの絆が育つよ。毎日できなくても大丈夫。" = "Every small step grows your bond with Pochi. It’s okay if you skip a day.";
+"%@のプロフィール" = "%@’s profile";
+"なまえ・毛色・首輪・チャームを選べるよ" = "Choose a name, coat, collar, and charm";
+"布団に入る" = "Get into bed on time";
+"本を1ページ読む" = "Read one page";
+"問題を1問解く" = "Solve one practice question";
+"%lldこから、気になるものを最大6個選んでね" = "Choose up to 6 promises from %lld ideas";
+"睡眠" = "Sleep";
+"%@ / %@" = "%@ / %@";
+"ここにないことを自分で追加" = "Add your own promise";
+"週 %@ 回の目安" = "About %@ times a week";
+"これで始める" = "Let’s begin";
+"あとで" = "Later";
+"おすすめは1〜3個から。あとでいつでも変えられるよ" = "Start with 1–3. You can change these anytime.";
+"例：絵を10分描く" = "e.g. Draw for 10 minutes";
+"カテゴリー" = "Category";
+"何を続けてみたい？" = "What would you like to keep doing?";
+"あとから名前や週の目標を変えられるよ。" = "You can change the name or weekly goal later.";
+"週に何回できたら花まる？" = "How many times a week feels like a win?";
+"約束を追加" = "Add a promise";
+"もどる" = "Back";
+"追加して選ぶ" = "Add and select";
+"やることのなまえ" = "Promise name";
+"毎日できなくても、週の目標に届けばOK。" = "You don’t have to do it every day. Reach your weekly goal at your own pace.";
+"アイコン" = "Icon";
+"いろ" = "Color";
+"けす" = "Delete";
+"ほぞん" = "Save";
+"やることをへんしゅう" = "Edit promise";
+"やることをけす？" = "Delete this promise?";
+"キャンセル" = "Cancel";
+"このやることは元にもどせません。" = "This promise can’t be undone.";
+"できたのあしあと" = "Your pawprints";
+"%@ のきろく" = "%@’s log";
+"追加" = "Add";
+"まだ記録がないよ" = "No logs yet";
+"この記録をけす？" = "Delete this log?";
+"この実績は元にもどせません。" = "This achievement can’t be undone.";
+"%@ に追加" = "Add to %@";
+"こころ・からだ" = "Mind & body";
+"暮らし" = "Home life";
+"学び・仕事" = "Learning & work";
+"人とのつながり" = "Connection";
+"すきなこと" = "Things you love";
+"ハート" = "Heart";
+"おほしさま" = "Star";
+"おつきさま" = "Moon";
+"ものがたり" = "Story";
+"本とぽちのものがたり" = "Books and Pochi";
+"おやすみのものがたり" = "Bedtime story";
+"学びとぽちのものがたり" = "Learning with Pochi";
+"じぶんをいたわるものがたり" = "Self-care story";
+"暮らしとぽちのものがたり" = "A cozy home with Pochi";
+"やさしさのものがたり" = "Kindness story";
+"すきなことのものがたり" = "Things we love";
+"できた分だけ、ふたりの世界が育つ" = "Every little step grows our world";
+"本をひらくたび、ふたりのしおりが増える" = "Every book adds a new bookmark to our story";
+"やすむ時間も、ふたりの大切な冒険" = "Rest is an important part of our adventure";
+"学ぶたび、ぽちの景色に発見が増える" = "Every lesson brings a new discovery to Pochi’s world";
+"じぶんをいたわるたび、ぽちもにっこり" = "When you care for yourself, Pochi smiles too";
+"暮らしを整えるたび、おうちが心地よくなる" = "Every little chore makes home cozier";
+"やさしさを届けるたび、つながりの花が咲く" = "Every kind act helps friendship bloom";
+"すきなことを楽しむたび、色が増えていく" = "Every hobby adds more color to our world";
+"わたしの約束" = "My promise";
+"読書" = "Reading";
+"おやすみ" = "Rest";
+"学び" = "Learning";
+"セルフケア" = "Self-care";
+"つながり" = "Connection";
+"好きなこと" = "Hobbies";
+"水を飲む" = "Drink water";
+"ストレッチ" = "Stretch";
+"お風呂" = "Take a bath";
+"ゆっくり休む" = "Take a proper rest";
+"深呼吸" = "Take a deep breath";
+"外の空気を吸う" = "Get some fresh air";
+"朝ごはんを食べる" = "Eat breakfast";
+"歯をみがく" = "Brush your teeth";
+"寝る前にスマホを置く" = "Put your phone away before bed";
+"5分だけ歩く" = "Take a 5-minute walk";
+"5分だけ片づけ" = "Tidy up for 5 minutes";
+"食器を洗う" = "Wash the dishes";
+"洗濯をする" = "Do a load of laundry";
+"明日の準備をする" = "Get ready for tomorrow";
+"植物に水をあげる" = "Water the plants";
+"本を10分読む" = "Read for 10 minutes";
+"勉強を10分する" = "Study for 10 minutes";
+"語学を5分する" = "Practice a language for 5 minutes";
+"一行日記を書く" = "Write one line in a journal";
+"大事なことを10分進める" = "Make 10 minutes of progress on something important";
+"友だちに連絡する" = "Reach out to a friend";
+"ありがとうを伝える" = "Tell someone thank you";
+"好きなことを10分する" = "Spend 10 minutes on something you love";
+"好きな音楽を聴く" = "Listen to music you love";
+"今日の写真を1枚撮る" = "Take one photo today";
+"もも" = "Peach";
+"きいろ" = "Yellow";
+"みどり" = "Green";
+"むらさき" = "Purple";
+"そら" = "Sky blue";
+"ぽちと今週のペース" = "Pochi & your weekly pace";
+"今週の目標、クリア！" = "Weekly goal complete!";
+"今週はあと%lld回でOK" = "Just %lld more this week";
+"いい調子！あと%lld回" = "Great progress! %lld to go";
+"毎日じゃなくていいよ。できた日に足あとをつけよう。" = "You don’t have to do it every day. Leave a pawprint when you do.";
+"週 %lld 回" = "%lld times a week";
+"できた日は、ワンタップ。" = "One tap for every win.";
+"プレミアム" = "Premium";
+"有効" = "Active";
+"未加入" = "Not subscribed";
+"アップグレード" = "Upgrade";
+"なまえ・見た目を変える" = "Change name and appearance";
+"お問い合わせ" = "Contact us";
+"アイコンのご要望・追加依頼など、お気軽にご連絡ください。" = "Contact us with icon ideas or other requests.";
+"がんばる自分にごほうび" = "A little reward for your effort";
+"プレミアムにアップグレード" = "Upgrade to Premium";
+"応援お願いします" = "Support the developer";
+"個人開発で、毎日こつこつ改善しています。プレミアムでの応援が励みになります。" = "I’m an independent developer improving this app every day. Your Premium support means a lot.";
+"おすすめ" = "Recommended";
+"プライバシーポリシー" = "Privacy Policy";
+"利用規約（EULA）" = "Terms of Use (EULA)";
+"プレミアム特典" = "Premium benefits";
+"・広告を非表示" = "・Remove ads";
+"・今後の追加特典を優先適用" = "・Get future benefits first";
+"購入を復元" = "Restore purchases";
+"月払い" = "Monthly";
+"年払い" = "Yearly";
+"2週間無料" = "2 weeks free";
+"1ヶ月無料" = "1 month free";
+"2週間の無料トライアルを開始" = "Start 2-week free trial";
+"1ヶ月の無料トライアルを開始" = "Start 1-month free trial";
+"無料トライアル終了後は自動更新され、月払いは%@/月、年払いは%@/年が請求されます。いつでも解約できます。" = "After the free trial, your subscription renews automatically at %@/month or %@/year. Cancel anytime.";
+"プラン情報を読み込み中です" = "Loading plan details…";
+"購入を完了できませんでした" = "The purchase could not be completed.";
+"閉じる" = "Close";
+"やることを選ぶ" = "Choose a promise";
+"ウィジェットに表示するやることを選びます。" = "Choose which promise to show in the widget.";
+"やることカード" = "Promise Card";
+"やることを1つ表示します。" = "Shows one of your promises.";
+"やることがないよ" = "No promises yet";
+"選択した約束" = "Selected promise";
+"ウィジェットで記録" = "Log from widget";
+"首輪を%@色にする" = "Set collar to %@";
+"チャームを%@にする" = "Set charm to %@";
+"%@と、これからも一緒" = "Together with %@";
+"読み込み中" = "Loading…";
+"今週 %lld / %lld 回" = "This week: %lld / %lld";
+"今日 %lldこ" = "Today: %lld";
+"%lld/%lld" = "%lld/%lld";
+"%lld / %lld" = "%lld / %lld";
+"勉強" = "Study";
+"運動" = "Exercise";
+"掃除" = "Clean up";
+"広告" = "Ad";
+"お風呂入る" = "Take a bath";
+"お風呂に入る" = "Take a bath";
+"朝ごはん" = "Breakfast";
+"朝ご飯" = "Breakfast";
+"週 %lld 回の目安" = "About %lld times a week";
+"読書の思い出" = "Reading keepsake";
+"おやすみの思い出" = "Rest keepsake";
+"学びの思い出" = "Learning keepsake";
+"じぶんをいたわる思い出" = "Self-care keepsake";
+"暮らしの思い出" = "Home keepsake";
+"つながりの思い出" = "Connection keepsake";
+"好きなことの思い出" = "Hobby keepsake";
+"約束を叶えるたび、選んだ景色が育つよ" = "Each promise you keep helps this world grow";
+"ぽちとの景色のプレビュー" = "Preview of Pochi’s world";
+"好きなテーマを選ぶと景色に表れるよ" = "Choose what you love and see it in Pochi’s world";
+"「%@」の景色のプレビュー" = "Preview of the %@ world";
+"約束を %@回叶えたよ" = "You kept this promise %@ times";
+"あと %@回で景色が育つよ" = "%@ more to grow this world";
+"%@と育てた景色だよ" = "A world you grew with %@";
+"%@が「%@」できたの、うれしい！" = "%@ is so happy you did “%@”!";
+"今日はもうできたよ" = "Done for today";
+"この日の約束は全部できたね" = "You’ve done all your promises for this day";
+"ふたりで育てた絆  %lld" = "Our growing bond  %lld";
+"「%@」の景色、成長 %@ / 3" = "“%@” scenery, growth %@ / 3";
+
+"しおりがまたひとつ増えたね！" = "Another bookmark for our story!";
+"休む約束を守れたね。今夜も安心だね" = "You kept your promise to rest. Sleep easy tonight.";
+"今日の発見がひとつ増えたよ！" = "We made one more discovery today!";
+"自分をいたわれたね。ぽちもうれしいな" = "You cared for yourself. That makes me happy!";
+"おうちがまた少し心地よくなったね" = "Our home feels a little cozier now.";
+"やさしさの花がまたひとつ咲いたね" = "Another flower of kindness has bloomed!";
+"好きなことの色がまたひとつ増えたね" = "Our world has another color from something you love!";
+
+"「%@」の景色が次に育つまで、あと%@回" = "%@’s world grows again in %@ promises";
+
+"選んだテーマはぜんぶ育ったよ" = "All your chosen themes have fully bloomed!";
+
+"ぽちの景色" = "Pochi’s world";
+
+"次まで %@回" = "%@ to next bloom";
+
+"育ったよ" = "Fully grown!";
+
+"今週の約束" = "This week’s promises";
+
+"週の目標まで" = "Weekly target";
+
+/* Pochi coat options */
+"ぽちの毛色" = "Pochi’s coat";
+"きなこ" = "Honey";
+"みるく" = "Milk tea";
+"ぽちの毛色を%@にする" = "Change Pochi’s coat to %@";
+
+/* Number-only progress labels */
+"ドット絵の部屋で歩いたり、ベッドで眠ったり、ご飯を食べたりするぽち" = "Pochi walking, sleeping in a bed, or eating in a pixel-art room";
+"%lld" = "%lld";
+"%lld / 3" = "%lld / 3";
+
+/* Compact home promise buttons */
+"今日の約束" = "Today’s promises";
+"記録する" = "Log it";
+"達成済み" = "Done";
+
+/* Pochi game screen accessibility */
+"ドット絵の柴犬ぽちが習慣に反応するゲーム画面" = "Pixel Shiba Pochi that reacts to your promises";
+"ドット絵の柴犬ぽちが歩いたり、眠ったり、習慣に反応したりするゲーム画面" = "Pixel Shiba Pochi who walks, sleeps, and reacts to your promises";
+
+/* Pixel game completion cue */
+"できた！" = "Done!";
+
+"%@の記録をシェア" = "Share %@’s log";
+"できた分だけ、ぽちと今日を。   #ぽちログ" = "One promise at a time with Pochi.   #WorkoutWithPochi";
+"できた分だけで大丈夫。ぽちに伝えてみよう。" = "Every little thing counts. Tell Pochi what you did.";
+
+/* Simplified three-step onboarding */
+"ぽちと、はじめよう" = "Meet Pochi";
+"じぶんを大切にする毎日を、一緒に過ごそう。" = "Let’s care for ourselves, one day at a time.";
+"もう少しカスタマイズ" = "Make Pochi yours";
+"ぽちをタップして反応を見る" = "Tap Pochi to see a reaction";
+"ぽちと、なにを続ける？" = "What would you like to keep doing?";
+"まずは1〜3こから。あとで増やせるよ" = "Start with 1–3. You can add more later.";
+"選んだ約束" = "Your promises";
+"もっと見る（%lldこ）" = "See more (%lld)";
+"おすすめだけ見る" = "Show recommendations";
+"自分でつくる" = "Make your own";
+"できない日があっても大丈夫。ぽちはいつでも待ってるよ。" = "It’s okay to miss a day. Pochi will be here.";
+"じゅんびできたよ！" = "All set!";
+"%@と、今日から一緒に。" = "You and %@, starting today.";
+"今日からの約束" = "Your promises";
+"週%lld回" = "%lld / week";
+"つぎへ" = "Next";
+"ぽちと暮らしはじめる" = "Start life with Pochi";
+"選んだ約束を保存してホーム画面を開きます" = "Save your promises and open Home";
+"次のステップへ進みます" = "Go to the next step";
+"3つのステップの%d番目" = "Step %d of 3";
+
+/* Screen polish */
+"きょうから、すこしずつ。" = "A little at a time, starting today.";
+"アイコンを選ぶ" = "Choose an icon";
+
+/* Shared retro labels */
+"約束の名前" = "Promise name";
+"約束を編集" = "Edit promise";
+"プラン" = "Plan";
+"名前、毛色、首輪、チャーム" = "Name, coat, collar, and charm";
+"サポート" = "Support";
+"アイコンの追加リクエストもこちら" = "Request more icons here";
+"見る" = "View";
+"編集" = "Edit";
+"開く" = "Open";
+"保存する" = "Save";
+"%@ に追加" = "Add to %@";
+"きろくを追加" = "Add a log";
+
+"記録したよ" = "Recorded";
+
+"取り消す" = "Undo";
+
+"前の月" = "Previous month";
+
+"次の月" = "Next month";
+
+"今月" = "This month";
+
+"すべて（%lld）" = "All (%lld)";
+
+"ホームには4こまで表示できます" = "Show up to 4 promises on Home";
+
+"ホームに表示" = "Show on Home";
+
+"選択済み" = "Selected";
+
+"未選択" = "Not selected";
+
+"今日のぽちを撮る" = "Take a photo of Pochi";
+
+"今日のぽち" = "Pochi today";
+
+"約束の名前を写真に入れる" = "Include promise names in photo";
+
+"写真をシェア" = "Share photo";
+
+"撮影できませんでした" = "Could not take photo";
+
+"ためしに、ごはんをあげてみる" = "Try feeding Pochi";
+
+"おためしなので、記録には残りません" = "Just practice — no habit is recorded";
+
+"%@ %@" = "%@ %@";
+
+"%@の記録" = "%@’s record";
+
+"プロフィール" = "Profile";
+
+"柴犬" = "Shiba Inu";
+
+"ダルメシアン" = "Dalmatian";
+
+"ポメラニアン" = "Pomeranian";
+
+"犬種" = "Breed";
+
+"柴犬の毛色" = "Shiba coat";
+
+"ごはん" = "Meal";
+
+"動きをおためし中です。購入するまで見た目は変わりません。" = "Previewing only. Your dog stays the same until you purchase and select this breed.";
+
+"全部入りプランを見る" = "See all-inclusive plan";
+
+"選択中" = "Selected";
+
+"この犬種にする" = "Choose this breed";
+
+"ぽちログ プレミアム" = "Workout with Pochi Premium";
+
+"一度の購入で、全部入り。自動更新はありません。" = "Everything in one purchase. No automatic renewal.";
+
+"広告を非表示" = "No ads";
+
+"ダルメシアン・ポメラニアンを選べる" = "Choose Dalmatian or Pomeranian";
+
+
+"今後追加する犬種・着せ替えも含まれます" = "Includes future breeds and outfits";
+
+"購入済みです" = "Purchased";
+
+"現在のサブスク特典は引き続き利用できます。" = "Your current subscription benefits remain available.";
+
+"買い切りへの移行は既存の契約を確認してからご案内します。" = "We will provide migration guidance after reviewing existing subscriptions.";
+
+"買い切りで購入" = "Buy once";
+
+"購入情報を再読み込み" = "Reload purchase information";
+
+"サブスクリプションを管理" = "Manage subscriptions";
+
+"購入情報を取得できませんでした。時間をおいて再試行してください。" = "Purchase information is unavailable. Please try again later.";
+
+"購入を確認できませんでした。購入を復元してください。" = "Could not verify purchase. Please restore purchases.";
+
+"購入は承認待ちです。承認後に反映されます。" = "Purchase is awaiting approval and will unlock once approved.";
+
+"購入を復元しました" = "Purchases restored";
+
+"復元できる購入はありませんでした" = "No purchases to restore";
+
+"復元できませんでした。もう一度お試しください。" = "Could not restore. Please try again.";
+
+"ドット絵の犬が歩いたり、眠ったり、習慣に反応したりするゲーム画面" = "A pixel dog walks, sleeps, and responds to your habits";
+
+"ぽちログ" = "Workout with Pochi";
+
+"色" = "Color";
+
+"%lldこ選択中" = "%lld selected";
+
+"約束はあとから追加できます" = "You can add promises later";
+
+"習慣の登録・記録は無料で上限なく使えます" = "Add and track unlimited habits for free";
+
+"広告なし・追加の犬種" = "No ads and more dog breeds";
+
+"テンプレートから選ぶ" = "Choose a template";
+
+"登録済み" = "Already added";
+
+"小さな目標を選ぶ" = "Choose a small goal";
+
+"目標は目安です。時間を測って取り組むことも、できたあとに記録することもできます。" = "Goals are a guide. Track time as you go, or simply record what you have done.";
+
+"選択を外す" = "Deselect";
+
+"本が気になる" = "A curious little reader";
+
+"いっしょに読書" = "Reading together";
+
+"本のそばで、うとうと" = "Dozing beside a book";
+
+"ボールを見つけた" = "Found a ball";
+
+"あそぼうよ" = "Let’s play";
+
+"得意なジャンプ" = "A proud little jump";
+
+"お気に入りのクッション" = "A favorite cushion";
+
+"ねむる準備" = "Getting ready for bed";
+
+"安心して、すやすや" = "Sleeping safe and sound";
+
+"ぽちの思い出" = "Little memories";
+
+"ぽちとの思い出は、ここに。" = "Your memories together belong here.";
+
+"続けた約束から、小さな出来事が生まれます。" = "Little moments grow from the habits you keep.";
+
+"思い出を保存できませんでした。" = "Could not save this memory.";
+
+"今日のできた" = "Today’s wins";
+
+"今日のできたことも、いっしょに残ります。" = "The things you did today become part of your memories.";
+
+"この日の写真はまだありません" = "No photo for this day yet.";
+
+"この日の記録はありません" = "No habits recorded on this day.";
+
+"できたことも写真に入れる" = "Include completed habits";
+
+"写真を作成できませんでした" = "Could not create the photo.";
+
+"ほか%lldこ" = "And %lld more";
+
+"食事" = "Meals";
+
+"水分" = "Water";
+
+"散歩" = "Walk";
+
+"感謝" = "Gratitude";
+
+"休憩" = "Rest";
+
+"洗濯" = "Laundry";
+
+"準備" = "Prepare";
+
+"植物" = "Plants";
+
+"語学" = "Languages";
+
+"日記" = "Journal";
+
+"集中" = "Focus";
+
+"連絡" = "Connect";
+
+"趣味" = "Hobbies";
+
+"音楽" = "Music";
+
+"写真" = "Photo";
+
+"歯みがき" = "Brush teeth";
+
+"食器洗い" = "Dishes";
+
+"表示中" = "Shown";
+
+"削除" = "Delete";
+
+"週7回は毎日、それ以外は週が終わってから部屋に反映されます。" = "A 7-day goal updates the room the next day. Other goals are checked after the week ends.";
+
+"あなたができたら、ぽちも一緒に。" = "When you do it, your pup joins in.";
+
+"毛色" = "Coat";
+
+"赤柴" = "Red";
+
+"白柴" = "White";
+
+"黒柴" = "Black";
+
+"黒ぶち" = "Black spots";
+
+"茶ぶち" = "Brown spots";
+
+"レモン" = "Lemon spots";
+
+"オレンジ" = "Orange";
+
+"クリーム" = "Cream";
+
+"ブラック" = "Black";
+
+"名前、犬種、毛色" = "Name, breed, coat";
+
+"この日のぽち" = "Pup of the day";
+
+"きろくに残して、あとからシェアできます。" = "Save it to your daily record and share it later.";
+
+"今日の一枚にする" = "Use as today’s photo";
+
+"約束を追加する" = "Add a promise";
+
+"約束を記録する" = "Record a promise";
+
+"今日 %lldこできた" = "%lld done today";
+
+
+"今日の約束を見る" = "View today’s promises";
+
+"登録した約束：%lldこ" = "%lld saved promises";
+
+/* Time spent together */
+"ひとやすみ中" = "Taking a break";
+"いっしょに取り組み中" = "Doing this together";
+"一緒に取り組んだ時間" = "Time spent together";
+"再開する" = "Resume";
+"ひとやすみ" = "Take a break";
+"%@、いっしょにできたね" = "We spent %@ together";
+"記録せず終了" = "End without saving";
+"%@と始める" = "Start with %@";
+"計測を終了しますか？" = "End this session?";
+"続ける" = "Keep going";
+"この時間は記録に残りません。" = "This time will not be saved.";
+"記録できませんでした" = "Could not save your session";
+"いっしょに何をする？" = "What shall we do together?";
+"いっしょに %@" = "Together · %@";
+
+/* Strength training and muscle growth */
+"筋トレ" = "Strength training";
+"スクワット" = "Squats";
+"腕立て伏せ" = "Push-ups";
+"ダンベル" = "Dumbbells";
+"いつものぽち" = "Original pup";
+"ちょいマッチョ" = "A little stronger";
+"たくましいぽち" = "Strong pup";
+"ムキムキぽち" = "Muscular pup";
+"マッスルぽち" = "Mighty muscle pup";
+"筋トレ %lld日" = "%lld strength days";
+"次の姿まであと%lld日" = "Next look in %lld days";
+"筋トレで育った姿を見る" = "See your pup’s strength progress";
+"%@と筋トレ" = "Train with %@";
+"ほかの習慣" = "Other habits";
+"筋トレで育った姿" = "Growing stronger together";
+"筋トレできた日を1日1回。休んでも成長は減りません。" = "Each strength-training day counts once. Rest days never undo your pup’s growth.";
+"成長に合わせる" = "Follow growth automatically";
+"%lld日" = "%lld days";
+"筋トレの動きを見る" = "Preview training moves";
+
+/* Strength-focused onboarding and navigation */
+"わたしの筋トレ" = "My training";
+"今週の筋トレ" = "This week’s training";
+"種目を追加する" = "Add an exercise";
+"今日の筋トレを見る" = "Today’s training";
+"筋トレを記録する" = "Log training";
+"種目を選ぶ" = "Choose an exercise";
+"どの種目をする？" = "What will you train?";
+"今日の筋トレ" = "Today’s training";
+"筋トレを %@回できたよ" = "%@ workouts completed";
+"筋トレを続けると、ぽちとの思い出が増えていくよ" = "Keep training to make more memories with Pochi.";
+"四つ足の犬が一緒に筋トレをしたり、休んだりする画面" = "A dog trains and rests with you, staying on all fours.";
+"ぽちと、筋トレをはじめよう" = "Start training with Pochi";
+"ひとりだと続かない筋トレも、ぽちと一緒に。" = "Build a training habit with Pochi by your side.";
+"ぽちの筋トレを見てみる" = "Watch Pochi train";
+"どの筋トレから始める？" = "Choose your first exercises";
+"気になる種目を選ぼう。あとから変えられるよ。" = "Pick what interests you. You can change it later.";
+"選んだ種目" = "Selected exercises";
+"自分の種目を追加" = "Add your own exercise";
+"休む日があっても大丈夫。ぽちはいつでも待ってるよ。" = "Rest days are welcome. Pochi will be here.";
+"続けるほど、ぽちもたくましく" = "Pochi grows stronger with you";
+"一緒に動いて、一緒に育とう。" = "Train together. Grow together.";
+"今日からの筋トレ" = "Your training starts here";
+"種目はあとで選べます。まずは「筋トレ」で始めよう。" = "Choose exercises later. Start with general strength training.";
+"ぽちと筋トレをはじめる" = "Let’s train with Pochi";
+"選んだ種目を保存して筋トレのホームを開きます" = "Save your exercises and open the training home screen.";
+"例：ベンチプレス" = "e.g. Bench press";
+"追加する種目は？" = "Which exercise will you add?";
+"週に何回を目安にする？" = "Your weekly target";
+"週の回数は目安です。ぽちの体格は筋トレした日数で育ちます。" = "Your weekly target is a guide. Pochi grows with the days you train.";
+"種目を追加" = "Add exercise";
+"種目の名前" = "Exercise name";
+"種目名" = "Exercise name";
+"種目を編集" = "Edit exercise";
+"この種目を削除しますか？" = "Delete this exercise?";
+"種目を削除しても、過去の記録とぽちの成長は残ります。" = "Past records and Pochi’s growth remain after you delete an exercise.";
+"この日の記録はすべて追加済みです" = "All entries for this day are already logged.";
+"いっしょに筋トレ中" = "Training together";
+"一緒に筋トレした時間" = "Time spent training together";
+"今日の筋トレも、ぽちと一緒に。   #ぽちログ" = "Today’s workout, with Pochi. #WorkoutWithPochi";
+"以前の習慣" = "Previous habits";
+"3日目の姿をプレビュー中" = "Preview: after 3 training days";
+"筋トレした累計3・7・14・30日で、ぽちが少しずつたくましくなります。" = "Pochi grows stronger at 3, 7, 14 and 30 total training days.";
+"時間は決めなくて大丈夫。始めてからの時間を測ります。" = "No time limit to set. We count the time from when you start.";
+"休んでも成長は減りません。自分のペースで続けよう。" = "Rest won’t undo growth. Keep going at your own pace.";
+"時間を測って、できたら記録。続けるほど、ぽちも育つよ。" = "Track your time, then save your workout. Pochi grows as you keep going.";
+"ぽちと筋トレ" = "Train with Pochi";
+"種目を選んで、ぽちとスタート。" = "Choose an exercise and start with Pochi.";
+"終わったら「できた」で保存。休憩中の時間は含みません。" = "Tap Done to save. Paused time doesn’t count.";
+"名前、犬種、毛色、筋トレで育った姿" = "Name, breed, coat and training growth";
+"筋トレやぽちについてのご意見もこちら" = "Share feedback on training or Pochi";
+"筋トレの登録・時間の計測・ぽちの成長は無料で使えます" = "Exercise logging, time tracking and Pochi’s growth are free.";
+"筋トレの相棒、ぽち" = "Pochi, your training buddy";
+"筋トレで育ったぽちがホーム画面にも。なでると反応します。" = "Your training buddy grows on your Home Screen too. Pet Pochi for a reaction.";
+
+"時間を測って、できたら記録。ぽちと一緒に続けよう。" = "Track your time, then save your workout. Keep going with Pochi.";
+
+"準備ができたら、ぽちと始めよう" = "Ready? Let’s start with Pochi";
+
+"今日の筋トレも、ぽちと一緒に。" = "Today’s workout, with Pochi.";
+
+"休む日があっても大丈夫。自分のペースで続けよう。" = "Rest days are welcome. Keep going at your own pace.";
+
+"週の回数は目安です。無理のないペースで続けよう。" = "Your weekly target is a guide. Find a pace that works for you.";
+
+"種目を削除しても、過去の記録は残ります。" = "Past records remain after you delete an exercise.";
+
+"筋トレの登録・時間の計測は無料で使えます" = "Exercise logging and time tracking are free.";
+
+"筋トレの相棒、ぽちがホーム画面にも。なでると反応します。" = "Pochi, your training buddy, on your Home Screen. Pet Pochi for a reaction.";
+
+"ごきげんなしっぽ" = "A happy tail wag";
+
+"腹筋" = "Crunches";
+"プランク" = "Plank";
+"サイドプランク" = "Side plank";
+"バードドッグ" = "Bird dog";
+"デッドバグ" = "Dead bug";
+"ランジ" = "Lunges";
+"ヒップリフト" = "Glute bridge";
+"かかと上げ" = "Calf raises";
+"%lld / %lldセット" = "Set %lld / %lld";
+"%lldセット" = "%lld sets";
+"%lldセット目・回" = "Set %lld · reps";
+"%lldセット目・秒" = "Set %lld · seconds";
+"%lld回" = "%lld reps";
+"%lld回 × %lldセット" = "%lld reps × %lld sets";
+"%lld秒 × %lldセット" = "%lld sec × %lld sets";
+"1セットの回数" = "Reps per set";
+"1セットの秒数" = "Seconds per set";
+"ここまでを記録する" = "Record progress so far";
+"このセット完了" = "Finish this set";
+"この内容で記録する" = "Save workout";
+"この種目で始める" = "Start this exercise";
+"そのまま始めても、回数・時間・セット数を変えても大丈夫。あとからいつでも編集できます。" = "Use the defaults or change reps, time and sets. You can edit them anytime.";
+"セットを追加" = "Add a set";
+"セット完了。ひとやすみしよう。" = "Set complete. Take a breather.";
+"セット数" = "Sets";
+"予定どおりなら、そのまま保存。違うときは実際の回数・時間に直せます。" = "Save as planned, or adjust each set to what you actually did.";
+"今回のトレーニング" = "This workout";
+"今日のトレーニング" = "Today's workout";
+"全セットおつかれさま！" = "All sets finished. Nice work!";
+"名前・アイコンを編集" = "Edit name and icon";
+"回" = "reps";
+"回数" = "Reps";
+"回数・時間・セット" = "Reps, time and sets";
+"基本メニューはそのまま始められます。" = "The basic exercises are ready to go.";
+"基本メニューを準備しました" = "Your exercises are ready";
+"実際にできた分" = "What you completed";
+"時間" = "Time";
+"最後のセットを外す" = "Remove last set";
+"次のセットを始める" = "Start next set";
+"残り時間" = "Time remaining";
+"秒" = "sec";
+"種目に戻る" = "Back to exercises";
+"種目をタップして、ぽちと始めよう。" = "Choose an exercise and start with Pochi.";
+"種目を削除" = "Delete exercise";
+"種目を選んでスタート。時間の種目はセットごとにカウントダウンします。" = "Choose an exercise to start. Timed exercises count down each set.";
+"結果を確認して記録" = "Review and save";
+"記録したよ。おつかれさま！" = "Workout saved. Well done!";
+"記録方法" = "Tracking mode";
+
+"%lld秒" = "%lld sec";
+
+"回数・時間" = "Reps and time";
+
+"そのまま始めても、回数・時間を変えても大丈夫。あとからいつでも編集できます。" = "Use the defaults or change reps and time. You can edit them anytime.";
+
+"おつかれさま！記録しよう。" = "Nice work! Save your workout.";
+
+"種目を選んで、ぽちと始めよう。" = "Pick an exercise and start with Pochi.";
+
+"筋トレを始める" = "Start a workout";
+
+"今日できた種目" = "Completed today";
+
+"変更" = "Change";
+
+"回数・時間を変更" = "Change reps or time";
+
+"種目の設定" = "Exercise settings";
+
+"今日やる種目を選ぼう" = "Choose an exercise for today";
+
+"種目を選んでね" = "Choose an exercise";
+
+"この内容にする" = "Use these settings";
+
+"終了して記録する" = "Finish and save";
+
+"%@と筋トレ" = "Train with %@";
+"回数や時間を決めて、できたら記録。ぽちと一緒に続けよう。" = "Choose your reps or time, then save when you finish. Keep going with Pochi.";
+
+"サウンド" = "Sound";
+
+"筋トレの効果音" = "Workout sounds";
+
+"開始・残り3秒・時間終了・記録保存" = "Start, final 3 seconds, timer end and saving";
+
+"データの取り扱いについて" = "Data handling";
+
+"広告のプライバシー設定" = "Ad privacy settings";
+
+"広告に関する同意を変更" = "Change your ad consent";
+
+"プライバシー設定を開けませんでした" = "Couldn’t open privacy settings";
+
+"時間をおいて、もう一度お試しください。" = "Please wait a little and try again.";

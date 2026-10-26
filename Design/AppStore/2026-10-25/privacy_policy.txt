@@ -1,0 +1,37 @@
+プライバシーポリシー / Privacy Policy
+最終更新日 / Last updated: 2026-10-25
+
+対象アプリ：ぽちと筋トレ / Workout with Pochi / 포치랑 운동 / 和波奇一起健身
+（旧称：ぽちログ、PupHabit、1分できたログ）
+
+1. 端末に保存する情報
+筋トレの種目、回数・時間の設定、トレーニング記録、ぽちの名前・見た目、アプリ内で生成したぽちの画像、設定を端末内に保存します。アプリとウィジェットは同じ端末の共有領域（App Group）を使います。これらの筋トレ記録や画像を開発者のサーバーへ送信する機能はありません。アカウント登録、HealthKitへのアクセス、カメラやマイクでの撮影・録音は行いません。利用者が画像の共有を選んだ場合は、選んだ共有先へ送信されます。端末のバックアップについてはAppleの設定と方針が適用されます。
+
+2. 広告と第三者サービス
+無料版ではGoogle AdMob（Google Mobile Ads SDK）によるバナー広告を表示します。Googleは広告配信、効果測定、不正防止、SDKの改善のため、IPアドレス（おおよその位置の推定に使われる場合があります）、端末やアプリに関する識別子、広告の表示・操作情報、アプリの利用に関する情報、クラッシュ・性能などの診断情報を取得する場合があります。筋トレの種目や回数、ぽちの名前・画像を広告SDKへ渡す独自の処理はありません。別途のアクセス解析SDKは導入していません。
+広告識別子（IDFA）を使うトラッキングは、Appleの許可がある場合に限られます。必要な地域ではGoogleの同意画面を表示します。同意の変更が必要な場合は、アプリの「設定」に広告のプライバシー設定を表示します。トラッキングの許可はiOSの「設定」から変更できます。許可しなくても筋トレと記録の機能を利用できます。プレミアム有効時は広告を表示しません。
+Googleのプライバシーポリシー：https://policies.google.com/privacy
+Googleの広告とデータ利用：https://policies.google.com/technologies/ads
+
+3. アプリ内購入
+プレミアムの購入・復元はAppleのApp Store / StoreKitを使います。アプリは購入状態や取引情報を確認して特典を有効にします。開発者がクレジットカード番号などの決済情報を取得することはありません。Appleによる取引情報の取り扱いにはAppleのプライバシーポリシーが適用されます。
+https://www.apple.com/legal/privacy/
+
+4. 保存と削除
+端末内の記録は利用者が削除するかアプリを削除するまで保存されます。削除前に共有した画像や端末のバックアップは、それぞれの保存先で管理してください。GoogleおよびAppleが取得する情報の保存・削除については、各社の方針をご確認ください。
+
+5. お問い合わせ
+お問い合わせフォームへ入力した情報は、問い合わせ対応と不具合調査のために利用します。フォームにはGoogleのサービスを利用しています。筋トレ記録や決済情報など、対応に不要な情報は送信しないでください。
+https://docs.google.com/forms/d/e/1FAIpQLSelR3Rc9eZtn_iu127LODCK1CHUQuVxRkkOrLEw1_fqfsqy_A/viewform?usp=header
+
+6. 改定
+機能や取り扱いの変更に応じて本ポリシーを更新し、このページでお知らせします。
+
+English
+Workout with Pochi stores exercise settings, workout records, your pup's name and appearance, generated pup pictures, and preferences on your device. The app and widget use a shared App Group. These workout records and pictures are not uploaded to a developer server. The app has no account system and does not access HealthKit, the camera, or the microphone. Pictures are shared only when you choose a sharing destination. Apple device-backup settings apply.
+
+The free app uses Google AdMob banner ads. Google's SDK may collect IP addresses (including for approximate location), device/app identifiers, ad impressions and interactions, app interaction information, and crash/performance diagnostics for advertising, measurement, fraud prevention, and SDK improvement. We do not pass your exercise details, pup name, or pictures to the ad SDK. No separate analytics SDK is integrated. IDFA-based tracking requires Apple's permission. Google's consent form is shown where required; an ad privacy settings entry appears in Settings when required by the consent service. You can change tracking permission in iOS Settings and use the workout features without granting it. Premium removes ads. See Google's policies linked above.
+
+Apple handles purchases and restores through the App Store and StoreKit. The app verifies purchase status and transaction information to enable benefits; the developer does not receive your payment card details. Apple's privacy policy applies to Apple transactions.
+
+Local records remain until you delete them or remove the app. Manage previously shared pictures and device backups at their respective destinations. Google and Apple control retention/deletion of information they collect. Information you voluntarily submit through our Google support form is used to respond to your inquiry and investigate issues. Please avoid submitting unnecessary workout or payment details. Contact us through the form above. Policy changes will be posted on this page.

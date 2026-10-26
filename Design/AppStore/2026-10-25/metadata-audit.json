@@ -1,0 +1,42 @@
+[
+  {
+    "locale": "ja",
+    "promo": true,
+    "description": true,
+    "releaseNotes": true,
+    "keywords": true,
+    "marketingURL": "https://tsumorimasahiro.github.io/app-ads.txt"
+  },
+  {
+    "locale": "en-US",
+    "promo": true,
+    "description": true,
+    "releaseNotes": true,
+    "keywords": true,
+    "marketingURL": "https://tsumorimasahiro.github.io/app-ads.txt"
+  },
+  {
+    "locale": "ko",
+    "promo": true,
+    "description": true,
+    "releaseNotes": true,
+    "keywords": true,
+    "marketingURL": "https://tsumorimasahiro.github.io/app-ads.txt"
+  },
+  {
+    "locale": "zh-Hans",
+    "promo": true,
+    "description": true,
+    "releaseNotes": true,
+    "keywords": true,
+    "marketingURL": "https://tsumorimasahiro.github.io/app-ads.txt"
+  },
+  {
+    "locale": "zh-Hant",
+    "promo": true,
+    "description": true,
+    "releaseNotes": true,
+    "keywords": true,
+    "marketingURL": "https://tsumorimasahiro.github.io/app-ads.txt"
+  }
+]

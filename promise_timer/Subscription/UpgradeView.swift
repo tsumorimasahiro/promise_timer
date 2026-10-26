@@ -3,268 +3,69 @@ import StoreKit
 
 struct UpgradeView: View {
     @ObservedObject var subscriptionManager: SubscriptionManager
-
-    @State private var selectedProductID = SubscriptionManager.monthlyProductID
-    @State private var isPurchasing = false
-    @State private var errorMessage: String?
+    @State private var isWorking = false
+    private var product: Product? { subscriptionManager.product(for: SubscriptionManager.lifetimeProductID) }
 
     var body: some View {
-        ZStack {
-            background
-            ScrollView {
-                VStack(spacing: 20) {
-                    heroCard
-                    perks
-                    planTiles
-                    primaryAction
-                    trialCaption
-                    legalLinks
-                    restoreRow
-                    supportCard
+        ScrollView {
+            VStack(alignment: .leading, spacing: 22) {
+                Text("ぽちログ プレミアム").font(pochiPixelFont(22))
+                Text("一度の購入で、全部入り。自動更新はありません。")
+                    .font(pochiPixelFont(14)).fixedSize(horizontal: false, vertical: true)
+                VStack(alignment: .leading, spacing: 14) {
+                    perk("広告を非表示", icon: .leaf)
+                    perk("ダルメシアン・ポメラニアンを選べる", icon: .paw)
+                    perk("今後追加する犬種・着せ替えも含まれます", icon: .sparkle)
+                }.padding(16).background(Color.mist, in: RoundedRectangle(cornerRadius: 7))
 
-                    if let errorMessage {
-                        Text(errorMessage)
-                            .font(.footnote)
-                            .foregroundStyle(.red)
-                    }
-                }
-                .padding(20)
-            }
-        }
-        .task {
-            if subscriptionManager.products.isEmpty {
-                await subscriptionManager.loadProducts()
-            }
-        }
-    }
+                Text("筋トレの登録・時間の計測は無料で使えます").font(pochiPixelFont(12))
 
-    private var background: some View {
-        ZStack {
-            LinearGradient(
-                colors: [Color.cream, Color.roseCloud.opacity(0.55), Color.mist],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-
-            Circle()
-                .fill(Color.candyBlue.opacity(0.08))
-                .frame(width: 240, height: 240)
-                .offset(x: 120, y: -180)
-
-            Circle()
-                .fill(Color.peach.opacity(0.12))
-                .frame(width: 200, height: 200)
-                .offset(x: -140, y: 220)
-        }
-    }
-
-    private var heroCard: some View {
-        VStack(spacing: 14) {
-            HStack {
-                Spacer()
-            }
-
-            Text("がんばる自分にごほうび")
-                .font(.subheadline.bold())
-                .foregroundStyle(Color.candyBlue)
-
-            VStack(spacing: 8) {
-                Text("プレミアムにアップグレード")
-                    .font(.title2.bold())
-                Text("やることを最大20個まで登録できます")
-                    .font(.subheadline)
-                    .foregroundStyle(Color.cocoa.opacity(0.7))
-            }
-            .multilineTextAlignment(.center)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(20)
-        .background(Color.cream.opacity(0.98))
-        .overlay(
-            RoundedRectangle(cornerRadius: 22)
-                .stroke(Color.peach.opacity(0.2), lineWidth: 1)
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 22))
-        .shadow(color: Color.peach.opacity(0.18), radius: 18, x: 0, y: 12)
-    }
-
-    private var supportCard: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("応援お願いします")
-                .font(.headline)
-            Text("個人開発で、毎日こつこつ改善しています。プレミアムでの応援が励みになります。")
-                .font(.subheadline)
-                .foregroundStyle(Color.cocoa.opacity(0.7))
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(16)
-        .background(Color.roseCloud.opacity(0.7))
-        .overlay(
-            RoundedRectangle(cornerRadius: 18)
-                .stroke(Color.peach.opacity(0.25), lineWidth: 1)
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 18))
-    }
-
-    private var planTiles: some View {
-        VStack(spacing: 12) {
-            planTile(
-                title: "月払い",
-                subtitle: "2週間無料",
-                productID: SubscriptionManager.monthlyProductID
-            )
-
-            planTile(
-                title: "年払い",
-                subtitle: "1ヶ月無料",
-                productID: SubscriptionManager.yearlyProductID
-            )
-        }
-    }
-
-    private func planTile(title: String, subtitle: String, productID: String) -> some View {
-        let isSelected = selectedProductID == productID
-        let priceText = subscriptionManager.productPrice(for: productID)
-        let isYearly = productID == SubscriptionManager.yearlyProductID
-
-        return Button {
-            selectedProductID = productID
-        } label: {
-            HStack(spacing: 12) {
-                VStack(alignment: .leading, spacing: 6) {
-                    HStack(spacing: 8) {
-                        Text(title)
-                            .font(.headline)
-                        if isYearly {
-                            Text("おすすめ")
-                                .font(.caption.bold())
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(Color.peach)
-                                .clipShape(Capsule())
+                if subscriptionManager.hasLifetime {
+                    Text("購入済みです").font(pochiPixelFont(16))
+                } else if subscriptionManager.hasLegacySubscription {
+                    Text("現在のサブスク特典は引き続き利用できます。")
+                        .font(pochiPixelFont(14))
+                    Text("買い切りへの移行は既存の契約を確認してからご案内します。")
+                        .font(pochiPixelFont(12))
+                } else if let product {
+                    Text(product.displayPrice).font(pochiPixelFont(24))
+                    PochiPrimaryButton(title: localizedText("買い切りで購入"), isEnabled: !isWorking) {
+                        Task {
+                            isWorking = true
+                            _ = await subscriptionManager.purchase(product)
+                            isWorking = false
                         }
                     }
-                    Text(subtitle)
-                        .font(.subheadline.bold())
-                        .foregroundStyle(Color.candyBlue)
+                } else {
+                    if subscriptionManager.isLoading { ProgressView() }
+                    Button("購入情報を再読み込み") { Task { await subscriptionManager.loadProducts() } }
+                        .font(pochiPixelFont(14)).frame(minHeight: 44)
+                        .disabled(subscriptionManager.isLoading)
                 }
-                Spacer()
-                Text(priceText)
-                    .font(.headline)
-                    .foregroundStyle(Color.cocoa)
-            }
-            .padding(16)
-            .frame(maxWidth: .infinity)
-            .background(isSelected ? Color.peach.opacity(0.18) : Color.sky.opacity(0.7))
-            .overlay(
-                RoundedRectangle(cornerRadius: 18)
-                    .stroke(isSelected ? Color.peach : Color.candyBlue.opacity(0.12), lineWidth: 1)
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 18))
-        }
-        .buttonStyle(.plain)
+
+                if let message = subscriptionManager.statusMessage {
+                    Text(localizedText(message)).font(pochiPixelFont(12)).fixedSize(horizontal: false, vertical: true)
+                }
+                Button("購入を復元") {
+                    Task { isWorking = true; await subscriptionManager.restore(); isWorking = false }
+                }.font(pochiPixelFont(14)).frame(minHeight: 44).disabled(isWorking)
+                if subscriptionManager.hasLegacySubscription {
+                    Link("サブスクリプションを管理", destination: URL(string: "https://apps.apple.com/account/subscriptions")!)
+                        .font(pochiPixelFont(14)).frame(minHeight: 44)
+                }
+                VStack(alignment: .leading, spacing: 8) {
+                    Link("プライバシーポリシー", destination: URL(string: "https://github.com/tsumorimasahiro/promise_timer/blob/main/privacy_policy.txt")!)
+                    Link("利用規約（EULA）", destination: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!)
+                }.font(pochiPixelFont(12))
+            }.padding(20).frame(maxWidth: .infinity, alignment: .leading)
+        }.background(Color.cream).foregroundStyle(Color.cocoa).tint(Color.grassDark)
+            .task { if subscriptionManager.products.isEmpty { await subscriptionManager.loadProducts() } }
     }
 
-    private var primaryAction: some View {
-        Button {
-            Task {
-                await purchaseSelected()
-            }
-        } label: {
-            Text(primaryButtonTitle)
-                .font(.headline.bold())
-                .frame(maxWidth: .infinity, minHeight: 52)
-                .background(Color.candyBlue)
-                .foregroundStyle(.white)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-        }
-        .disabled(isPurchasing)
-        .opacity(isPurchasing ? 0.6 : 1)
-    }
-
-    private var trialCaption: some View {
-        Text(pricingDisclosure)
-            .font(.footnote)
-            .foregroundStyle(Color.cocoa.opacity(0.65))
-            .multilineTextAlignment(.center)
-    }
-
-    private var legalLinks: some View {
-        HStack(spacing: 16) {
-            if let privacyPolicyURL {
-                Link("プライバシーポリシー", destination: privacyPolicyURL)
-            }
-            if let eulaURL {
-                Link("利用規約（EULA）", destination: eulaURL)
-            }
-        }
-        .font(.footnote.bold())
-        .foregroundStyle(Color.candyBlue)
-    }
-
-    private var perks: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("プレミアム特典")
-                .font(.headline)
-            Text("・広告を非表示")
-                .font(.subheadline)
-            Text("・やることを最大20個まで登録")
-                .font(.subheadline)
-            Text("・今後の追加特典を優先適用")
-                .font(.subheadline)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(16)
-        .background(Color.cream.opacity(0.9))
-        .clipShape(RoundedRectangle(cornerRadius: 18))
-    }
-
-    private var restoreRow: some View {
-        Button("購入を復元") {
-            Task {
-                try? await AppStore.sync()
-                await subscriptionManager.refreshEntitlements()
-            }
-        }
-        .font(.subheadline.bold())
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 10)
-    }
-
-    private var primaryButtonTitle: String {
-        if selectedProductID == SubscriptionManager.monthlyProductID {
-            return "2週間の無料トライアルを開始"
-        }
-        return "1ヶ月の無料トライアルを開始"
-    }
-
-    private var pricingDisclosure: String {
-        let monthlyPrice = subscriptionManager.productPrice(for: SubscriptionManager.monthlyProductID)
-        let yearlyPrice = subscriptionManager.productPrice(for: SubscriptionManager.yearlyProductID)
-        return "無料トライアル終了後は自動更新され、月払いは\(monthlyPrice)/月、年払いは\(yearlyPrice)/年が請求されます。いつでも解約できます。"
-    }
-
-    private var privacyPolicyURL: URL? {
-        URL(string: "https://github.com/tsumorimasahiro/promise_timer/blob/main/privacy_policy.txt")
-    }
-
-    private var eulaURL: URL? {
-        URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")
-    }
-
-    private func purchaseSelected() async {
-        guard let product = subscriptionManager.product(for: selectedProductID) else {
-            errorMessage = "プラン情報を読み込み中です"
-            return
-        }
-        errorMessage = nil
-        isPurchasing = true
-        let success = await subscriptionManager.purchase(product)
-        isPurchasing = false
-        if !success {
-            errorMessage = "購入を完了できませんでした"
+    private func perk(_ title: String, icon: PochiPixelIconKind) -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            PochiPixelGlyph(kind: icon, color: .grassDark, size: 20)
+            Text(localizedText(title)).font(pochiPixelFont(14)).fixedSize(horizontal: false, vertical: true)
         }
     }
 }

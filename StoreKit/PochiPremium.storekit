@@ -1,0 +1,53 @@
+{
+  "identifier": "PochiPremiumLocal",
+  "nonRenewingSubscriptions": [],
+  "products": [
+    {
+      "displayPrice": "3900",
+      "familyShareable": false,
+      "internalID": "6825802653",
+      "localizations": [
+        {
+          "displayName": "ぽちログ プレミアム",
+          "description": "広告非表示と追加犬種を、一度の購入で。自動更新はありません。",
+          "locale": "ja"
+        },
+        {
+          "displayName": "PupHabit Premium",
+          "description": "Remove ads and unlock extra breeds. One-time purchase.",
+          "locale": "en_US"
+        },
+        {
+          "displayName": "PupHabit 프리미엄",
+          "description": "한 번 구매로 광고 제거와 추가 견종을 이용하세요. 자동 갱신은 없어요.",
+          "locale": "ko"
+        },
+        {
+          "displayName": "PupHabit 高级版",
+          "description": "一次购买，移除广告并解锁更多犬种。无自动续费。",
+          "locale": "zh_Hans"
+        },
+        {
+          "displayName": "PupHabit 進階版",
+          "description": "一次購買，移除廣告並解鎖更多犬種。無自動續訂。",
+          "locale": "zh_Hant"
+        }
+      ],
+      "productID": "promise_timer.premium.lifetime",
+      "referenceName": "Pochi Premium Lifetime",
+      "type": "NonConsumable"
+    }
+  ],
+  "settings": {
+    "_applicationInternalID": "6760613210",
+    "_developerTeamID": "36RR696644",
+    "_failTransactionsEnabled": false,
+    "_locale": "ja_JP",
+    "_storefront": "JPN"
+  },
+  "subscriptionGroups": [],
+  "version": {
+    "major": 3,
+    "minor": 0
+  }
+}

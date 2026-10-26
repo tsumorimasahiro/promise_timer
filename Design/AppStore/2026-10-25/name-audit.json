@@ -1,0 +1,27 @@
+[
+  {
+    "locale": "ja",
+    "name": "ぽちと筋トレ",
+    "subtitle": "ドット絵のわんこと続ける筋トレ記録"
+  },
+  {
+    "locale": "en-US",
+    "name": "Workout with Pochi",
+    "subtitle": "A pixel pup, your workout pal"
+  },
+  {
+    "locale": "ko",
+    "name": "포치랑 운동",
+    "subtitle": "픽셀 강아지와 함께하는 근력 운동 기록"
+  },
+  {
+    "locale": "zh-Hans",
+    "name": "和波奇一起健身",
+    "subtitle": "像素小狗陪你训练，记录每次努力"
+  },
+  {
+    "locale": "zh-Hant",
+    "name": "和波奇一起健身",
+    "subtitle": "像素小狗陪你訓練，記錄每次努力"
+  }
+]

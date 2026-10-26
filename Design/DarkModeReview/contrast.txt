@@ -1,0 +1,10 @@
+light Cocoa/Cream: 9.81:1
+light Cocoa/Surface: 10.42:1
+light GrassDark/Cream: 4.70:1
+light OnAccent/GrassDark: 4.99:1
+light Cocoa/GrassLight: 6.63:1
+dark Cocoa/Cream: 13.18:1
+dark Cocoa/Surface: 10.66:1
+dark GrassDark/Cream: 8.22:1
+dark OnAccent/GrassDark: 7.92:1
+dark Cocoa/GrassLight: 5.66:1

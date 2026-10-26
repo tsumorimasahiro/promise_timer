@@ -1,0 +1,11 @@
+.DS_Store
+.build/
+DerivedData/
+build/
+*.xcarchive
+*.ipa
+*.xcresult
+xcuserdata/
+*.xcuserstate
+ReviewBuild/*.zip
+__pycache__/

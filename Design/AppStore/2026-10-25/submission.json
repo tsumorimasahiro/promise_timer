@@ -1,0 +1,27 @@
+{
+  "appId": "6760613210",
+  "name": "ぽちと筋トレ",
+  "version": "1.05",
+  "build": "65",
+  "submissionId": "35b51fef-a2a9-42e0-87f1-b3c826e666b4",
+  "submittedAt": "2026-10-25T09:55:00+09:00",
+  "status": "WAITING_FOR_REVIEW",
+  "url": "https://appstoreconnect.apple.com/apps/6760613210/distribution/reviewsubmissions/details/35b51fef-a2a9-42e0-87f1-b3c826e666b4",
+  "items": [
+    {
+      "type": "APP_VERSION",
+      "version": "1.05",
+      "build": "65",
+      "status": "WAITING_FOR_REVIEW"
+    },
+    {
+      "type": "IN_APP_PURCHASE",
+      "id": "6825802653",
+      "productId": "promise_timer.premium.lifetime",
+      "change": "Localized premium display names",
+      "status": "WAITING_FOR_REVIEW"
+    }
+  ],
+  "release": "AUTOMATIC_AFTER_APPROVAL",
+  "proof": "submission-waiting-for-review.png"
+}

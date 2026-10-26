@@ -1,54 +1,103 @@
 import SwiftUI
 import GoogleMobileAds
 
-struct AdMobMRECView: View {
-    let adUnitID: String
+/// A compact banner, kept separate from the game and tappable habit controls.
+/// The existing production unit is a banner unit previously used at MREC size.
+struct PochiBannerAd: View {
+    var canLoad = true
+    @ObservedObject private var privacy = AdPrivacyManager.shared
+    @State private var loaded = false
+
+    private var adUnitID: String {
+#if DEBUG
+        return "ca-app-pub-3940256099942544/2934735716"
+#else
+        return "ca-app-pub-4731680416753736/7227046727"
+#endif
+    }
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 4) {
             Text("広告")
-                .font(.caption.bold())
-                .foregroundStyle(Color.candyBlue.opacity(0.7))
-            AdMobMRECRepresentable(adUnitID: adUnitID)
-                .frame(width: 300, height: 250)
-                .clipShape(RoundedRectangle(cornerRadius: 18))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 18)
-                        .stroke(Color.candyBlue.opacity(0.12), lineWidth: 1)
-                )
+                .font(pochiPixelFont(10))
+                .foregroundStyle(Color.cocoa.opacity(0.65))
+                .opacity(loaded ? 1 : 0)
+                .accessibilityHidden(!loaded)
+            ZStack {
+                Color.clear
+                if canLoad && privacy.canRequestAds {
+                    CompactBannerController(adUnitID: adUnitID, loaded: $loaded)
+                        .opacity(loaded ? 1 : 0)
+                        .allowsHitTesting(loaded)
+                        .accessibilityHidden(!loaded)
+                }
+            }
+                // Keep the slot stable during consent, loading and failures.
+                .frame(width: 320, height: 50)
+                .clipped()
         }
         .frame(maxWidth: .infinity)
-        .padding(.top, 8)
+        .padding(.vertical, 8)
+        .background(Color.cream)
     }
 }
 
-private struct AdMobMRECRepresentable: UIViewRepresentable {
+private struct CompactBannerController: UIViewControllerRepresentable {
     let adUnitID: String
+    @Binding var loaded: Bool
 
-    func makeUIView(context: Context) -> BannerView {
-        let bannerView = BannerView(adSize: AdSizeMediumRectangle)
-        bannerView.adUnitID = adUnitID
-        bannerView.rootViewController = context.coordinator.rootViewController
-        bannerView.load(Request())
-        return bannerView
+    func makeUIViewController(context: Context) -> Host {
+        let host = Host()
+        host.adUnitID = adUnitID
+        host.onLoaded = { loaded = $0 }
+        return host
     }
 
-    func updateUIView(_ uiView: BannerView, context: Context) {
-        if uiView.rootViewController == nil {
-            uiView.rootViewController = context.coordinator.rootViewController
+    func updateUIViewController(_ host: Host, context: Context) {
+        host.onLoaded = { loaded = $0 }
+    }
+
+    static func dismantleUIViewController(_ host: Host, coordinator: ()) {
+        host.onLoaded = nil
+        host.banner.delegate = nil
+        host.banner.removeFromSuperview()
+    }
+
+    final class Host: UIViewController, BannerViewDelegate {
+        let banner = BannerView(adSize: AdSizeBanner)
+        var adUnitID = ""
+        var onLoaded: ((Bool) -> Void)?
+        private var requested = false
+
+        override func viewDidLoad() {
+            super.viewDidLoad()
+            view.backgroundColor = .clear
+            banner.translatesAutoresizingMaskIntoConstraints = false
+            banner.adUnitID = adUnitID
+            banner.rootViewController = self
+            banner.delegate = self
+            view.addSubview(banner)
+            NSLayoutConstraint.activate([
+                banner.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                banner.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+                banner.widthAnchor.constraint(equalToConstant: 320),
+                banner.heightAnchor.constraint(equalToConstant: 50)
+            ])
         }
-    }
 
-    func makeCoordinator() -> Coordinator {
-        Coordinator()
-    }
+        override func viewDidAppear(_ animated: Bool) {
+            super.viewDidAppear(animated)
+            guard !requested, AdPrivacyManager.shared.canRequestAds else { return }
+            requested = true
+            banner.load(Request())
+        }
 
-    final class Coordinator {
-        let rootViewController: UIViewController? = {
-            let scenes = UIApplication.shared.connectedScenes
-                .compactMap { $0 as? UIWindowScene }
-            let windows = scenes.flatMap { $0.windows }
-            return windows.first(where: { $0.isKeyWindow })?.rootViewController
-        }()
+        func bannerViewDidReceiveAd(_ bannerView: BannerView) {
+            onLoaded?(true)
+        }
+
+        func bannerView(_ bannerView: BannerView, didFailToReceiveAdWithError error: Error) {
+            onLoaded?(false)
+        }
     }
 }

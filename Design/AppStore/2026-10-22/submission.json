@@ -1,0 +1,25 @@
+{
+  "appID": "6760613210",
+  "version": "1.04",
+  "build": "64",
+  "status": "WAITING_FOR_REVIEW",
+  "submittedAt": "2026-10-23T00:15:00+09:00",
+  "submissionID": "4ae3e758-440a-4bb2-82ae-a2c586e7088e",
+  "items": [
+    "iOS 1.04 (64)",
+    "Pochi Premium Lifetime (6825802653)"
+  ],
+  "url": "https://appstoreconnect.apple.com/apps/6760613210/distribution/reviewsubmissions/details/4ae3e758-440a-4bb2-82ae-a2c586e7088e",
+  "releasePolicy": "Existing automatic release after approval retained",
+  "archive": ".build/PupHabit-1.04-64.xcarchive",
+  "uploadLog": ".build/submission-upload.log",
+  "warnings": [
+    "GoogleMobileAds and UserMessagingPlatform vendor dSYMs missing; upload succeeded"
+  ],
+  "verification": [
+    "Both review items visibly Waiting for Review",
+    "Five locale keywords/release notes saved",
+    "User explicitly approved export-compliance answer",
+    "Actual purchase UI with local StoreKit test product and JPY3900 captured for IAP review; not a production purchase test"
+  ]
+}
