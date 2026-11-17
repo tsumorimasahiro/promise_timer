@@ -1,0 +1,162 @@
+{
+  "locale": "ja",
+  "outputs": [
+    {
+      "path": "Design/AppStore/2026-11-18/ja/01-companion.png",
+      "sha256": "a1da5a94820a6b925198d2a256dbed96c920265e1bb147904eaf592306c401da",
+      "size": [
+        1320,
+        2868
+      ]
+    },
+    {
+      "path": "Design/AppStore/2026-11-18/ja/02-five-reps.png",
+      "sha256": "bfada5f60d54f0a8780f24febc74ebccf279f5f7a55dd810e66dd8332d108fe4",
+      "size": [
+        1320,
+        2868
+      ]
+    },
+    {
+      "path": "Design/AppStore/2026-11-18/ja/03-calendar.png",
+      "sha256": "ffd9a09899e82155697be7e6c914f57323f49285a850d56261cf0d00ca140ea6",
+      "size": [
+        1320,
+        2868
+      ]
+    },
+    {
+      "path": "Design/AppStore/2026-11-18/ja/04-your-pochi.png",
+      "sha256": "95a40759025ef8b8fd147fa92fa613153dc2cbb3962f09d703dd1c1c83fbb923",
+      "size": [
+        1320,
+        2868
+      ]
+    },
+    {
+      "path": "Design/AppStore/2026-11-18/ja/05-your-pace.png",
+      "sha256": "0c5bdd0448e9c9c575323ced432f1c7a94b57fe7e0e289de33ced2fbf971aafa",
+      "size": [
+        1320,
+        2868
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "path": "Design/AppStore/2026-11-11/raw/ja-hero-pushup-low-candidate.png",
+      "sha256": "a558eb6466063a97d16a597efe03c152fef40ba8af9e4f10955bda4733ce7379",
+      "size": [
+        1320,
+        2868
+      ]
+    },
+    {
+      "path": "Design/AppStore/2026-11-11/raw/ja-hero.png",
+      "sha256": "a558eb6466063a97d16a597efe03c152fef40ba8af9e4f10955bda4733ce7379",
+      "size": [
+        1320,
+        2868
+      ]
+    },
+    {
+      "path": "Design/AppStore/2026-11-11/raw/ja-timer.png",
+      "sha256": "5a9506b129690b441b53ae267d08ab8cf4884361c3fab1378d9325cc1cada621",
+      "size": [
+        1320,
+        2868
+      ]
+    },
+    {
+      "path": "Design/AppStore/2026-11-11/raw/ja-profile.png",
+      "sha256": "651edcc470c05e6c293456f3651b0bae7e6e94186ea14724cf85da0a22880a10",
+      "size": [
+        1320,
+        2868
+      ]
+    },
+    {
+      "path": "Design/AppStore/2026-11-11/raw/ja-share.png",
+      "sha256": "81084077184cc02ca5de58e58172c23bb28f6df0d088aa650934b331ca6d7606",
+      "size": [
+        1320,
+        2868
+      ]
+    },
+    {
+      "path": "Design/GrowthReview/01-onboarding-ja.png",
+      "sha256": "c264f7499dce5e3c3368cbf0e53acc78b51fc2a104a6c6dc4be8011bf7196433",
+      "size": [
+        1320,
+        2868
+      ]
+    },
+    {
+      "path": "Design/GrowthReview/02-first-workout-ja.png",
+      "sha256": "b6fa21b9570cadb9f02ff448d1c4bcd6826c9d9774ef654af761147414082b88",
+      "size": [
+        1320,
+        2868
+      ]
+    },
+    {
+      "path": "Design/AppStore/2026-11-17/raw/ja-calendar.png",
+      "sha256": "786a7159048d8cab4e0d31a95b5451b78f3e1a3678ec99662c1894736433ce1b",
+      "size": [
+        1320,
+        2868
+      ]
+    },
+    {
+      "path": "promise_timer/Assets.xcassets/pochi-coat-shiba-kinako.imageset/dog.png",
+      "sha256": "4474b9189dc734e8b1c01c5ca853034425d9a8502058792fc7166dcb76972038",
+      "size": [
+        32,
+        32
+      ]
+    },
+    {
+      "path": "promise_timer/Assets.xcassets/pochi-coat-shiba-milk.imageset/dog.png",
+      "sha256": "9eeb5b2a86d35ecbd824472cabaf5376ca6020bbcb5443bff0d5537dfab4ee0e",
+      "size": [
+        32,
+        32
+      ]
+    },
+    {
+      "path": "promise_timer/Assets.xcassets/pochi-coat-shiba-black.imageset/dog.png",
+      "sha256": "94fc53b48a9b7af6eb2e3e426392b42be4b5ba64a8974dda0c038f1ff1e92504",
+      "size": [
+        32,
+        32
+      ]
+    }
+  ],
+  "calendar": "Actual app calendar/list components, Debug-only synthetic sample records",
+  "composition": "Crops only; real app UI and original pixel artwork",
+  "previews": [
+    {
+      "path": "Design/AppStore/2026-11-18/contact-ja.png",
+      "sha256": "df3f2b56aa2619a3ee0fa1034fbdd4b8fb5925a98a53a7fe5e434198245bfb6d",
+      "size": [
+        1650,
+        717
+      ]
+    },
+    {
+      "path": "Design/AppStore/2026-11-18/search-preview.png",
+      "sha256": "b630fa54e3e1e21b53de7242935558baafa5488d1e890b14a27771fb411e98d3",
+      "size": [
+        600,
+        260
+      ]
+    }
+  ],
+  "palette": {
+    "background": "#E8F3F7",
+    "text": "#34454C",
+    "accent": "#A94E24",
+    "approvedStudy": "Design/AppStore/2026-11-17/palette-studies/sky"
+  },
+  "validation": "All five images and 120px search preview visually inspected; opaque RGB PNG dimensions verified. No Simulator used for this palette-only revision."
+}

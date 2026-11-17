@@ -15,6 +15,13 @@ enum PochiWorkoutCatalog {
          make("strength.calfRaises", "かかと上げ", "calf")]
     }
     static var starterPresets: [HabitPreset] { presets }
+    /// A one-session introduction; the saved catalog keeps the user's usual target.
+    static func introductoryWorkout(in selected: [HabitPreset]) -> HabitPreset {
+        let squat = selected.first { $0.id == "squats" } ?? presets[0]
+        return HabitPreset(id: squat.id, title: squat.title, iconName: squat.iconName,
+            tintName: squat.tintName, weeklyTarget: squat.weeklyTarget, category: squat.category,
+            workoutPlan: WorkoutPlan(mode: .repetitions, target: 5, sets: 1))
+    }
     static func customID() -> String { "strength.custom." + UUID().uuidString }
     static func isWorkout(_ preset: HabitPreset) -> Bool {
         PochiPromiseReaction.activity(for: preset) == .strength

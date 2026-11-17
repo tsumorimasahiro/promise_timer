@@ -1,0 +1,16 @@
+{
+  "app": "6760613210",
+  "group": "f2a0cdbc-8d18-4680-b6bf-9e05f557db4a",
+  "groupName": "Owner only",
+  "testerCount": 1,
+  "internal": true,
+  "publicLinkEnabled": false,
+  "version": "1.07",
+  "build": "69",
+  "buildID": "d790b038-231d-4900-97f3-9c20aa430ddb",
+  "betaDetail": {
+    "autoNotifyEnabled": true,
+    "internalBuildState": "IN_BETA_TESTING",
+    "externalBuildState": "READY_FOR_BETA_SUBMISSION"
+  }
+}

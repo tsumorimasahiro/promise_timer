@@ -199,3 +199,50 @@ enum PochiBreed: String, CaseIterable, Identifiable {
         }
     }
 }
+
+
+/// Uses calendar weeks and real recorded values; timed work never becomes repetitions.
+struct WorkoutWeekSummary {
+    let days: Int
+    let previousDays: Int
+    let repetitions: Int
+    let seconds: Int
+
+    init(logs: [HabitLog], now: Date, calendar: Calendar) {
+        let week = calendar.dateInterval(of: .weekOfYear, for: now)!
+        let previousStart = calendar.date(byAdding: .weekOfYear, value: -1, to: week.start)!
+        let valid = logs.filter { !$0.workouts.isEmpty && $0.completedAt <= now }
+        let current = valid.filter { $0.completedAt >= week.start && $0.completedAt < week.end }
+        let previous = valid.filter { $0.completedAt >= previousStart && $0.completedAt < week.start }
+        days = Set(current.map { calendar.startOfDay(for: $0.completedAt) }).count
+        previousDays = Set(previous.map { calendar.startOfDay(for: $0.completedAt) }).count
+        let records = current.flatMap(\.workouts)
+        repetitions = records.filter { $0.plan.mode == .repetitions }.flatMap(\.values).reduce(0) { $0 + max(0, $1) }
+        seconds = records.filter { $0.plan.mode == .timed }.flatMap(\.values).reduce(0) { $0 + max(0, $1) }
+    }
+}
+
+extension HabitPreset {
+    func withPlan(_ plan: WorkoutPlan) -> Self {
+        Self(id: id, title: title, iconName: iconName, tintName: tintName, weeklyTarget: weeklyTarget, category: category, workoutPlan: plan)
+    }
+}
+
+extension WorkoutPlan {
+    var lightSession: Self { Self(mode: mode, target: min(validated.target, mode == .timed ? 15 : 5), sets: 1) }
+}
+
+enum WorkoutHomeSelection {
+    static func previous(presets: [HabitPreset], lastCompleted: HabitPreset?, logs: [HabitLog], now: Date) -> HabitPreset? {
+        if let lastCompleted, let current = presets.first(where: { $0.id == lastCompleted.id }) {
+            return current.withPlan(lastCompleted.workoutPlan)
+        }
+        // Migration fallback for installs that predate the dedicated completed-session snapshot.
+        for log in logs.sorted(by: { $0.completedAt > $1.completedAt }) where log.completedAt <= now {
+            if let record = log.workouts.last, let current = presets.first(where: { $0.id == log.presetID }) {
+                return current.withPlan(record.plan)
+            }
+        }
+        return nil
+    }
+}

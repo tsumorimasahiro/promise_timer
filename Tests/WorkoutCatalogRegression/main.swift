@@ -7,6 +7,19 @@ require(choices.count == 11 && !choices.contains { $0.id == "strength" }, "Only 
 require(choices.allSatisfy(PochiWorkoutCatalog.isWorkout), "Every offered exercise builds strength")
 require(PochiWorkoutCatalog.initialSelection([]) == choices, "Skipping choices has a usable strength default")
 require(PochiWorkoutCatalog.initialSelection([choices[1]]) == [choices[1]], "User selection is retained")
+let customSquat = HabitPreset(id: "squats", title: "ゆっくりスクワット", iconName: "squat", tintName: .mintGreen,
+    weeklyTarget: 2, workoutPlan: WorkoutPlan(mode: .repetitions, target: 17))
+let personalMenu = [customSquat] + choices.dropFirst()
+let firstWorkout = PochiWorkoutCatalog.introductoryWorkout(in: personalMenu)
+require(firstWorkout.id == customSquat.id && firstWorkout.title == customSquat.title,
+    "The introduction records against the actual squat exercise")
+require(firstWorkout.workoutPlan.mode == .repetitions && firstWorkout.workoutPlan.target == 5,
+    "The introduction starts a short real workout")
+require(personalMenu.first?.workoutPlan.target == 17 && PochiWorkoutCatalog.presets[0].workoutPlan.target == 10,
+    "The short introduction never replaces custom or default saved targets")
+let restoredFirstWorkout = try JSONDecoder().decode(HabitPreset.self, from: JSONEncoder().encode(firstWorkout))
+require(restoredFirstWorkout == firstWorkout, "The introduction can resume with its own session snapshot")
+require(PochiWorkoutCatalog.introductoryWorkout(in: []).id == "squats", "The first workout has a valid fallback")
 let custom = HabitPreset(id: PochiWorkoutCatalog.customID(), title: "Aメニュー", iconName: "heart.fill", tintName: .peach)
 let decoded = try JSONDecoder().decode(HabitPreset.self, from: JSONEncoder().encode(custom))
 require(PochiWorkoutCatalog.isWorkout(decoded), "Custom training survives title/icon choices and persistence")

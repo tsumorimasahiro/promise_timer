@@ -1,13 +1,9 @@
 import SwiftUI
+import UserNotifications
 
 extension WorkoutPlan {
     var summary: String {
         String(format: NSLocalizedString(mode == .timed ? "%lld秒" : "%lld回", comment: "Workout target"), target)
-    }
-}
-extension HabitPreset {
-    func withPlan(_ plan: WorkoutPlan) -> Self {
-        Self(id: id, title: title, iconName: iconName, tintName: .peach, workoutPlan: plan)
     }
 }
 
@@ -40,7 +36,7 @@ struct WorkoutPlanFields: View {
                 .onChange(of: plan.mode) { plan.target = $0 == .timed ? 30 : 10 }
             WorkoutNumberField(label: NSLocalizedString(plan.mode == .timed ? "1セットの秒数" : "1セットの回数", comment: ""),
                 value: $plan.target, range: 1...(plan.mode == .timed ? 3600 : 999))
-        }.font(.subheadline).foregroundStyle(Color.cocoa)
+        }.font(pochiPixelFont(.subheadline)).foregroundStyle(Color.cocoa)
     }
 }
 
@@ -75,7 +71,7 @@ struct WorkoutResultSheet: View {
         NavigationStack {
             Form {
                 Section {
-                    HStack { WorkoutIcon(name: preset.iconName); Text(localizedPresetTitle(id: preset.id, storedTitle: preset.title)).font(.headline) }
+                    HStack { WorkoutIcon(name: preset.iconName); Text(localizedPresetTitle(id: preset.id, storedTitle: preset.title)).font(pochiPixelFont(.headline)) }
                     Text(preset.workoutPlan.summary).foregroundStyle(.secondary)
                     Text("予定どおりなら、そのまま保存。違うときは実際の回数・時間に直せます。")
                 }
@@ -89,7 +85,7 @@ struct WorkoutResultSheet: View {
                     if !values.isEmpty { Button("最後のセットを外す") { values.removeLast() } }
                 }
             }.scrollContentBackground(.hidden).background(Color.cream)
-                .navigationTitle("筋トレを記録する").navigationBarTitleDisplayMode(.inline)
+                .pochiNavigationTitle("筋トレを記録する").navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button("もどる", action: onCancel) } }
                 .safeAreaInset(edge: .bottom) {
                     PochiPrimaryButton(title: NSLocalizedString("この内容で記録する", comment: ""), isEnabled: values.contains { $0 > 0 }) {
@@ -106,6 +102,14 @@ struct WorkoutSelectionPanel: View {
     let presets: [HabitPreset]
     let finished: Bool
     var compact = false
+    var logs: [HabitLog] = []
+    var onQuickStart: (HabitPreset) -> Void = { _ in }
+    var strengthDays = 0
+    var lastCompleted: HabitPreset? = nil
+    var showNativeAd = false
+    var onViewRecords: () -> Void = {}
+    @State private var showingReminder = false
+    var onShare: (() -> Void)? = nil
     let onStart: (HabitPreset) -> Void
     let onEdit: (HabitPreset) -> Void
     let onAdd: () -> Void
@@ -118,63 +122,102 @@ struct WorkoutSelectionPanel: View {
         return draftPlans[preset.id].map { preset.withPlan($0) } ?? preset
     }
 
+    private var previousPreset: HabitPreset? {
+        WorkoutHomeSelection.previous(presets: presets, lastCompleted: lastCompleted, logs: logs, now: Date())
+    }
+
     var body: some View {
-        let footerLayout = compact ? AnyLayout(HStackLayout(spacing: 8)) : AnyLayout(VStackLayout(spacing: 8))
-        VStack(spacing: 8) {
-            HStack {
-                Text(editingTarget ? "回数・時間" : "種目を選ぶ").font(pochiPixelFont(16))
-                Spacer()
-                if editingTarget {
-                    Button("種目に戻る") { editingTarget = false }.font(.caption).frame(minHeight: 36)
-                } else if finished {
-                    Text("記録したよ。おつかれさま！").font(.caption).foregroundStyle(Color.grassDark)
-                }
-            }.frame(minHeight: 36)
-            ScrollView {
-                if editingTarget, let selected {
-                    inlineTargetEditor(selected)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 14) {
+                let stage = PochiMuscleStage.earned(days: strengthDays)
+                if let next = stage.next {
+                    HStack {
+                        Text(localizedFormat("次の姿まであと%lld日", next.requiredDays - strengthDays)).font(pochiPixelFont(.caption)).padding(.leading, 16)
+                        Spacer(minLength: 0)
+                    }
+                    ProgressView(value: Double(strengthDays), total: Double(next.requiredDays)).tint(Color.grassDark)
                 } else {
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
-                        ForEach(presets) { preset in exerciseButton(preset) }
-                    }.padding(2)
-                    Button("自分の種目を追加", action: onAdd)
-                        .frame(maxWidth: .infinity, minHeight: 44)
-                        .background(Color.mist, in: RoundedRectangle(cornerRadius: 10))
-                        .padding(.top, 8)
+                    HStack {
+                        Text("ぽちと最高の相棒になったよ！").font(pochiPixelFont(.caption)).padding(.leading, 16)
+                        Spacer(minLength: 0)
+                    }
                 }
-            }
-            footerLayout {
-                if let selected {
-                    HStack(spacing: 8) {
-                        if !compact {
-                            WorkoutIcon(name: selected.iconName, size: 24)
-                            Text(localizedPresetTitle(id: selected.id, storedTitle: selected.title))
-                                .font(pochiPixelFont(13)).lineLimit(2)
-                            Spacer(minLength: 0)
+                if finished {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("記録したよ。おつかれさま！").font(pochiPixelFont(14))
+                        if let previous = previousPreset {
+                            Text(localizedPresetTitle(id: previous.id, storedTitle: previous.title) + " · " + previous.workoutPlan.summary).font(pochiPixelFont(.caption))
                         }
-                        Button { editingTarget.toggle() } label: {
-                            HStack(spacing: 4) {
-                                Text(selected.workoutPlan.summary).font(.subheadline)
-                                Image(systemName: "pencil").font(.caption)
-                            }.frame(minHeight: 44)
-                        }.accessibilityLabel("回数・時間を変更")
+                        if let onShare { Button("今日の写真を見る", action: onShare).frame(minHeight: 44) }
+                    }.padding(10).frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color.mist, in: RoundedRectangle(cornerRadius: 10))
+                }
+                HStack {
+                    Text("種目を選ぶ").font(pochiPixelFont(15)).padding(.leading, 16)
+                    Spacer(minLength: 0)
+                }
+                ScrollViewReader { proxy in
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(presets) { preset in exerciseButton(preset).id(preset.id) }
+                            Button(action: onAdd) {
+                                VStack(spacing: 6) {
+                                    Image(systemName: "plus").frame(height: 32)
+                                    Text("自分の種目を追加").font(pochiPixelFont(.caption))
+                                }.frame(width: 110, height: 76)
+                            }.buttonStyle(.bordered)
+                        }.padding(3)
+                    }
+                    .onAppear { proxy.scrollTo(selectedID, anchor: .center) }
+                    .onChange(of: selectedID) { id in proxy.scrollTo(id, anchor: .center) }
+                }
+                if let selected {
+                    HStack {
+                        Text(selected.workoutPlan.summary).font(pochiPixelFont(18))
+                        Spacer()
+                        Button("今日は軽めに") {
+                            draftPlans[selected.id] = selected.workoutPlan.lightSession
+                        }.font(pochiPixelFont(.caption)).frame(minHeight: 44)
                         Menu {
                             Button("回数・時間を変更") { editingTarget = true }
                             Button("名前・アイコンを編集") { onEdit(selected) }
                         } label: {
-                            Image(systemName: "ellipsis").frame(width: 32, height: 44)
+                            Image(systemName: "slider.horizontal.3").frame(width: 44, height: 44)
                         }.accessibilityLabel("種目の設定")
                     }
                 }
-                PochiPrimaryButton(title: NSLocalizedString(selected == nil ? "種目を選んでね" : "この種目で始める", comment: ""), isEnabled: selected != nil) {
-                    guard let selected else { return }
-                    onStart(selected)
+                PochiPrimaryButton(title: localizedText("この種目で始める"), isEnabled: selected != nil) {
+                    if let selected { onQuickStart(selected) }
                 }
-            }.padding(10).background(Color.pochiSurface, in: RoundedRectangle(cornerRadius: 12))
+                if !logs.isEmpty || showNativeAd {
+                    let summary = WorkoutWeekSummary(logs: logs, now: Date(), calendar: localeAwareGregorianCalendar)
+                    Button(action: onViewRecords) {
+                        HStack {
+                            Text(localizedFormat("今週は%lld日できた", summary.days))
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                        }.font(pochiPixelFont(.subheadline)).padding(.vertical, 14)
+                    }.buttonStyle(.plain)
+                }
+                if showNativeAd { PochiNativeAd() }
+            }.padding(.bottom, 16)
         }.foregroundStyle(Color.cocoa)
-            .onChange(of: presets) { _ in
-                if selected == nil { selectedID = nil; editingTarget = false }
+            .onAppear(perform: restoreSelection)
+            .onChange(of: presets) { _ in if selected == nil { restoreSelection() } }
+            .sheet(isPresented: $editingTarget) {
+                NavigationStack {
+                    ScrollView { if let selected { inlineTargetEditor(selected).padding() } }
+                        .pochiNavigationTitle("回数・時間を変更")
+                        .toolbar { ToolbarItem(placement: .confirmationAction) { Button("閉じる") { editingTarget = false } } }
+                }.presentationDetents([.medium, .large])
             }
+    }
+
+    private func restoreSelection() {
+        guard selected == nil else { return }
+        let previous = previousPreset
+        selectedID = previous?.id ?? presets.first?.id
+        if let previous { draftPlans[previous.id] = previous.workoutPlan }
     }
 
     private func inlineTargetEditor(_ preset: HabitPreset) -> some View {
@@ -205,7 +248,7 @@ struct WorkoutSelectionPanel: View {
                         var updated = plan.wrappedValue; updated.target = target; plan.wrappedValue = updated
                     } label: {
                         Text(WorkoutPlan(mode: plan.wrappedValue.mode, target: target).summary)
-                            .font(.subheadline).frame(maxWidth: .infinity, minHeight: 44)
+                            .font(pochiPixelFont(.subheadline)).frame(maxWidth: .infinity, minHeight: 44)
                             .background(Color.mist, in: RoundedRectangle(cornerRadius: 8))
                     }
                 }
@@ -215,24 +258,90 @@ struct WorkoutSelectionPanel: View {
 
     private func exerciseButton(_ preset: HabitPreset) -> some View {
         let isSelected = selectedID == preset.id
-        let displayed = draftPlans[preset.id].map { preset.withPlan($0) } ?? preset
         return Button { selectedID = preset.id } label: {
-            HStack(spacing: 8) {
-                WorkoutIcon(name: preset.iconName, size: 28)
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(localizedPresetTitle(id: preset.id, storedTitle: preset.title))
-                        .font(pochiPixelFont(13)).lineLimit(2)
-                    Text(displayed.workoutPlan.summary).font(.caption).foregroundStyle(.secondary)
-                }
-                Spacer(minLength: 0)
-                if isSelected { Image(systemName: "checkmark.circle.fill").font(.caption).foregroundStyle(Color.grassDark) }
-            }.frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).padding(10)
+            VStack(spacing: 6) {
+                WorkoutIcon(name: preset.iconName, size: 36)
+                Text(localizedPresetTitle(id: preset.id, storedTitle: preset.title))
+                    .font(pochiPixelFont(12)).lineLimit(2).multilineTextAlignment(.center)
+            }.frame(width: 112, height: 82)
                 .foregroundStyle(Color.cocoa)
                 .background(isSelected ? Color.mist : Color.pochiSurface, in: RoundedRectangle(cornerRadius: 10))
                 .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.grassDark.opacity(isSelected ? 1 : 0.2), lineWidth: isSelected ? 2 : 1))
-                .contentShape(RoundedRectangle(cornerRadius: 10))
+                .overlay(alignment: .topTrailing) {
+                    if isSelected { Image(systemName: "checkmark.circle.fill").font(.caption).foregroundStyle(Color.grassDark).padding(5) }
+                }
         }.buttonStyle(.plain)
-            .accessibilityLabel(localizedPresetTitle(id: preset.id, storedTitle: preset.title) + ", " + displayed.workoutPlan.summary)
+            .accessibilityLabel(localizedPresetTitle(id: preset.id, storedTitle: preset.title))
             .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+
+}
+
+
+struct WorkoutReminderSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @State private var enabled = false
+    @State private var weekday = 4
+    @State private var time = Date()
+    @State private var status: String?
+    @State private var saving = false
+    private let identifier = "pochi.workout.weekly.v1"
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Toggle("筋トレのお知らせ", isOn: $enabled)
+                if enabled {
+                    Picker("曜日", selection: $weekday) {
+                        ForEach(1...7, id: \.self) { day in
+                            Text(localeAwareGregorianCalendar.weekdaySymbols[day - 1]).tag(day)
+                        }
+                    }
+                    DatePicker("時刻", selection: $time, displayedComponents: .hourAndMinute)
+                    Text("選んだ曜日に週1回お知らせします。いつでもオフにできます。")
+                        .font(pochiPixelFont(.caption))
+                }
+                if let status { Text(localizedText(status)).foregroundStyle(.secondary) }
+                Button("保存する") { Task { await save() } }.disabled(saving)
+            }
+            .pochiNavigationTitle("次の筋トレをお知らせ")
+            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("閉じる") { dismiss() } } }
+            .task {
+                let requests = await UNUserNotificationCenter.current().pendingNotificationRequests()
+                if let trigger = requests.first(where: { $0.identifier == identifier })?.trigger as? UNCalendarNotificationTrigger {
+                    enabled = true
+                    weekday = trigger.dateComponents.weekday ?? 4
+                    time = Calendar.current.date(bySettingHour: trigger.dateComponents.hour ?? 20,
+                        minute: trigger.dateComponents.minute ?? 0, second: 0, of: Date()) ?? Date()
+                }
+            }
+        }
+    }
+
+    @MainActor private func save() async {
+        saving = true
+        defer { saving = false }
+        let center = UNUserNotificationCenter.current()
+        guard enabled else {
+            center.removePendingNotificationRequests(withIdentifiers: [identifier])
+            center.removeDeliveredNotifications(withIdentifiers: [identifier])
+            dismiss()
+            return
+        }
+        do {
+            guard try await center.requestAuthorization(options: [.alert, .sound]) else {
+                status = "通知が許可されていません。iPhone・iPadの設定で通知を許可してください。"
+                return
+            }
+            let content = UNMutableNotificationContent()
+            content.title = localizedText("ぽちと、ひとつだけ筋トレしよう")
+            content.body = localizedText("今日は軽めでも大丈夫。あなたのペースで。")
+            content.sound = .default
+            var components = Calendar.current.dateComponents([.hour, .minute], from: time)
+            components.weekday = weekday
+            try await center.add(UNNotificationRequest(identifier: identifier, content: content,
+                trigger: UNCalendarNotificationTrigger(dateMatching: components, repeats: true)))
+            dismiss()
+        } catch { status = "お知らせを保存できませんでした。もう一度お試しください。" }
     }
 }

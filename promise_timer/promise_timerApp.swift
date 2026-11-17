@@ -13,20 +13,25 @@ import WidgetKit
 struct promise_timerApp: App {
     @Environment(\.scenePhase) private var scenePhase
 
+    init() { PochiTypography.configureAppAppearance() }
+
     var body: some Scene {
         WindowGroup {
-            #if DEBUG
-            if let index = ProcessInfo.processInfo.arguments.firstIndex(of: "-pochi-review-appearance"),
-               ProcessInfo.processInfo.arguments.indices.contains(index + 1) {
-                PochiAppearanceReviewScreen(screen: ProcessInfo.processInfo.arguments[index + 1])
-            } else if ProcessInfo.processInfo.arguments.contains("-pochi-review-premium") {
-                PochiPremiumReviewScreen()
-            } else {
+            Group {
+                #if DEBUG
+                if let index = ProcessInfo.processInfo.arguments.firstIndex(of: "-pochi-review-appearance"),
+                   ProcessInfo.processInfo.arguments.indices.contains(index + 1) {
+                    PochiAppearanceReviewScreen(screen: ProcessInfo.processInfo.arguments[index + 1])
+                } else if ProcessInfo.processInfo.arguments.contains("-pochi-review-premium") {
+                    PochiPremiumReviewScreen()
+                } else {
+                    ContentView()
+                }
+                #else
                 ContentView()
+                #endif
             }
-            #else
-            ContentView()
-            #endif
+            .font(pochiPixelFont(.body))
         }
         .onChange(of: scenePhase) { phase in
             if phase == .background {

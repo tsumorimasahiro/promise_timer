@@ -4,6 +4,7 @@ struct SettingsView: View {
     @ObservedObject var subscriptionManager: SubscriptionManager
     @ObservedObject private var adPrivacy = AdPrivacyManager.shared
     @State private var showingPrivacyError = false
+    @State private var showingReminder = false
     let onEditPochi: () -> Void
     @Environment(\.openURL) private var openURL
     @AppStorage(WorkoutSounds.enabledKey, store: WorkoutSounds.defaults) private var workoutSoundsEnabled = true
@@ -40,13 +41,17 @@ struct SettingsView: View {
                         .buttonStyle(.plain)
                     }
 
+                    Button("次の筋トレをお知らせ") { showingReminder = true }
+                        .frame(minHeight: 44)
+                        .sheet(isPresented: $showingReminder) { WorkoutReminderSheet() }
+
                     settingsSection("サウンド") {
                         Toggle(isOn: $workoutSoundsEnabled) {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("筋トレの効果音").font(pochiPixelFont(12))
                                     .foregroundStyle(Color.cocoa)
                                 Text("開始・残り3秒・時間終了・記録保存")
-                                    .font(.system(size: 13, weight: .regular, design: .rounded))
+                                    .font(pochiPixelFont(13))
                                     .foregroundStyle(Color.cocoa.opacity(0.64))
                             }
                         }
@@ -145,7 +150,7 @@ struct SettingsView: View {
                     .font(pochiPixelFont(12))
                     .foregroundStyle(Color.cocoa)
                 Text(detail)
-                    .font(.system(size: 13, weight: .regular, design: .rounded))
+                    .font(pochiPixelFont(13))
                     .foregroundStyle(Color.cocoa.opacity(0.64))
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)

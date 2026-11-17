@@ -773,3 +773,52 @@
 "プライバシー設定を開けませんでした" = "Couldn’t open privacy settings";
 
 "時間をおいて、もう一度お試しください。" = "Please wait a little and try again.";
+
+/* First workout and sharing */
+"まずはスクワット5回。終わったら、できた分を記録しよう。" = "Start with 5 squats. Save what you did when you finish.";
+"名前・毛色・メニューは、あとからいつでも変えられます。" = "You can change the name, coat and exercises anytime.";
+"名前と毛色を変える" = "Change name and coat";
+"スクワット5回をはじめる" = "Start with 5 squats";
+"設定をあとにして、ぽちと一緒にスクワットを始めます" = "Start squats with Pochi and set things up later.";
+"メニューを設定してから始める" = "Set up exercises first";
+"アプリの紹介文とリンクを添える" = "Include an app message and link";
+"ぽちと筋トレできた！" = "A workout with Pochi!";
+"今日のぽちをシェア" = "Share today's Pochi";
+
+"ぽちと最高の相棒になったよ！" = "You and Pochi are a great team!";
+
+"休んでも、これまでの成長はなくならないよ" = "Your progress stays, even when you rest.";
+
+"前回と同じ内容で始める" = "Repeat your last workout";
+
+"今日は軽めに" = "Take it easy today";
+
+"今週のふりかえり" = "Your week together";
+
+"今週は%lld日、先週は%lld日" = "This week: %lld days · Last week: %lld days";
+
+"合計%lld回・%lld秒" = "Total: %lld reps · %lld seconds";
+
+"少しずつ、ふたりの記録が増えているよ" = "Every little workout adds to your story.";
+
+"次の筋トレをお知らせ" = "Plan a workout reminder";
+
+"筋トレのお知らせ" = "Workout reminder";
+
+"曜日" = "Day of the week";
+
+"時刻" = "Time";
+
+"選んだ曜日に週1回お知らせします。いつでもオフにできます。" = "A reminder once a week on your chosen day. Turn it off anytime.";
+
+"通知が許可されていません。iPhone・iPadの設定で通知を許可してください。" = "Notifications are disabled. Enable them in your iPhone or iPad settings.";
+
+"ぽちと、ひとつだけ筋トレしよう" = "Time for a little workout with Pochi";
+
+"今日は軽めでも大丈夫。あなたのペースで。" = "A light workout is enough. Go at your own pace.";
+
+"お知らせを保存できませんでした。もう一度お試しください。" = "Could not save your reminder. Please try again.";
+
+"今日の写真を見る" = "View today’s photo";
+
+"今週は%lld日できた" = "Trained on %lld days this week";

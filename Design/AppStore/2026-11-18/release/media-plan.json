@@ -1,0 +1,154 @@
+{
+  "read_only": true,
+  "app_id": "6760613210",
+  "version": "1.07",
+  "version_id": "7fa882a8-2061-4520-8d12-8efe11948011",
+  "library_id": "6760613210",
+  "placement_group": "IPHONE_DYNAMIC_ISLAND_LARGE_PROFILE",
+  "locale_ids": {
+    "ja": "6fb01941-45f2-4297-8595-f6220a18ad88"
+  },
+  "limits": {
+    "APP_SCREENSHOT": 10
+  },
+  "version_state": "PREPARE_FOR_SUBMISSION",
+  "assets": [
+    {
+      "key": "ja/APP_SCREENSHOT/01-hero.png",
+      "path": "/Users/tsumori/promise_timer/.build/asc-107-assets/ja/01-hero.png",
+      "locale": "ja",
+      "placement_type": "APP_SCREENSHOT",
+      "type": "appAssetLibraryImages",
+      "size": 286317,
+      "sha256": "a1da5a94820a6b925198d2a256dbed96c920265e1bb147904eaf592306c401da",
+      "metadata": {
+        "width": 1320,
+        "height": 2868,
+        "alpha": false
+      },
+      "reference_name": "pochi:ja:APP_SCREENSHOT:a1da5a94820a6b925198d2a256dbed96c920265e1bb147904eaf592306c401da",
+      "allowed_spec_ids": [
+        "bd402f1a-26ee-5b83-9dd7-972c60c43d47"
+      ]
+    },
+    {
+      "key": "ja/APP_SCREENSHOT/02-timer.png",
+      "path": "/Users/tsumori/promise_timer/.build/asc-107-assets/ja/02-timer.png",
+      "locale": "ja",
+      "placement_type": "APP_SCREENSHOT",
+      "type": "appAssetLibraryImages",
+      "size": 215995,
+      "sha256": "bfada5f60d54f0a8780f24febc74ebccf279f5f7a55dd810e66dd8332d108fe4",
+      "metadata": {
+        "width": 1320,
+        "height": 2868,
+        "alpha": false
+      },
+      "reference_name": "pochi:ja:APP_SCREENSHOT:bfada5f60d54f0a8780f24febc74ebccf279f5f7a55dd810e66dd8332d108fe4",
+      "allowed_spec_ids": [
+        "bd402f1a-26ee-5b83-9dd7-972c60c43d47"
+      ]
+    },
+    {
+      "key": "ja/APP_SCREENSHOT/03-calendar.png",
+      "path": "/Users/tsumori/promise_timer/.build/asc-107-assets/ja/03-calendar.png",
+      "locale": "ja",
+      "placement_type": "APP_SCREENSHOT",
+      "type": "appAssetLibraryImages",
+      "size": 332345,
+      "sha256": "ffd9a09899e82155697be7e6c914f57323f49285a850d56261cf0d00ca140ea6",
+      "metadata": {
+        "width": 1320,
+        "height": 2868,
+        "alpha": false
+      },
+      "reference_name": "pochi:ja:APP_SCREENSHOT:ffd9a09899e82155697be7e6c914f57323f49285a850d56261cf0d00ca140ea6",
+      "allowed_spec_ids": [
+        "bd402f1a-26ee-5b83-9dd7-972c60c43d47"
+      ]
+    },
+    {
+      "key": "ja/APP_SCREENSHOT/04-share.png",
+      "path": "/Users/tsumori/promise_timer/.build/asc-107-assets/ja/04-share.png",
+      "locale": "ja",
+      "placement_type": "APP_SCREENSHOT",
+      "type": "appAssetLibraryImages",
+      "size": 215288,
+      "sha256": "95a40759025ef8b8fd147fa92fa613153dc2cbb3962f09d703dd1c1c83fbb923",
+      "metadata": {
+        "width": 1320,
+        "height": 2868,
+        "alpha": false
+      },
+      "reference_name": "pochi:ja:APP_SCREENSHOT:95a40759025ef8b8fd147fa92fa613153dc2cbb3962f09d703dd1c1c83fbb923",
+      "allowed_spec_ids": [
+        "bd402f1a-26ee-5b83-9dd7-972c60c43d47"
+      ]
+    },
+    {
+      "key": "ja/APP_SCREENSHOT/05-profile.png",
+      "path": "/Users/tsumori/promise_timer/.build/asc-107-assets/ja/05-profile.png",
+      "locale": "ja",
+      "placement_type": "APP_SCREENSHOT",
+      "type": "appAssetLibraryImages",
+      "size": 223723,
+      "sha256": "0c5bdd0448e9c9c575323ced432f1c7a94b57fe7e0e289de33ced2fbf971aafa",
+      "metadata": {
+        "width": 1320,
+        "height": 2868,
+        "alpha": false
+      },
+      "reference_name": "pochi:ja:APP_SCREENSHOT:0c5bdd0448e9c9c575323ced432f1c7a94b57fe7e0e289de33ced2fbf971aafa",
+      "allowed_spec_ids": [
+        "bd402f1a-26ee-5b83-9dd7-972c60c43d47"
+      ]
+    }
+  ],
+  "reusable_asset_ids": {
+    "ja/APP_SCREENSHOT/01-hero.png": null,
+    "ja/APP_SCREENSHOT/02-timer.png": null,
+    "ja/APP_SCREENSHOT/03-calendar.png": null,
+    "ja/APP_SCREENSHOT/04-share.png": null,
+    "ja/APP_SCREENSHOT/05-profile.png": null
+  },
+  "current_placements": {
+    "ja": [
+      {
+        "id": "32400019-2f6c-855a-8f3d-1fea12a9dc9e",
+        "placement_type": "APP_PREVIEW",
+        "image": null,
+        "video": "0ec00019-2f6c-855a-8123-46f82867f8a0"
+      },
+      {
+        "id": "36800019-2f6c-855a-8f21-43837f4a74f8",
+        "placement_type": "APP_SCREENSHOT",
+        "image": "13000019-2f6c-855a-802a-f3cb955d5dee",
+        "video": null
+      },
+      {
+        "id": "1e400019-2f6c-855a-8f1b-5ff6cb6df825",
+        "placement_type": "APP_SCREENSHOT",
+        "image": "ad400019-2f6c-855a-8031-c6a2e24b511a",
+        "video": null
+      },
+      {
+        "id": "d1800019-2f6c-855a-8f38-7af81627dc3e",
+        "placement_type": "APP_SCREENSHOT",
+        "image": "b5c00019-2f6c-855a-800d-65bdff99edc3",
+        "video": null
+      },
+      {
+        "id": "d8c00019-2f6c-855a-8f3f-8669f316fe01",
+        "placement_type": "APP_SCREENSHOT",
+        "image": "dcc00019-2f6c-855a-8036-47c67ffa2478",
+        "video": null
+      },
+      {
+        "id": "76400019-2f6c-855a-8f3a-e52e4a07b260",
+        "placement_type": "APP_SCREENSHOT",
+        "image": "ca400019-2f6c-855a-8003-3a1b2ad5ce17",
+        "video": null
+      }
+    ]
+  }
+}

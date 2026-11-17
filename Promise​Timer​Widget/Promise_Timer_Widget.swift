@@ -107,17 +107,17 @@ private struct PochiCompanionWidgetView: View {
         GeometryReader { geometry in
             if family == .systemSmall {
                 VStack(spacing: 2) {
-                    Text(entry.name).font(.custom("PixelMplus12-Bold", size: 13))
+                    Text(entry.name).font(pochiPixelFont(13))
                         .lineLimit(1).minimumScaleFactor(0.7)
                     dogImage(size: 64)
                         .frame(maxHeight: .infinity)
                     if let preset = entry.workouts.first {
-                        Text(presetTitle(preset)).font(.system(size: 12, weight: .semibold))
+                        Text(presetTitle(preset)).font(pochiPixelFont(12))
                             .lineLimit(1).minimumScaleFactor(0.7)
                         HStack(spacing: 4) {
                             Image(systemName: "play.fill").font(.system(size: 9))
                             Text(entry.activePresetID != nil ? NSLocalizedString("筋トレに戻る", comment: "") : target(preset))
-                                .font(.system(size: 12, weight: .semibold))
+                                .font(pochiPixelFont(12))
                         }.foregroundStyle(.white).frame(maxWidth: .infinity, minHeight: 28)
                             .background(green, in: RoundedRectangle(cornerRadius: 8))
                     } else { emptyStart }
@@ -125,10 +125,10 @@ private struct PochiCompanionWidgetView: View {
             } else {
                 HStack(spacing: 12) {
                     VStack(spacing: 3) {
-                        Text(entry.name).font(.custom("PixelMplus12-Bold", size: 14))
+                        Text(entry.name).font(pochiPixelFont(14))
                             .lineLimit(1).minimumScaleFactor(0.7)
                         dogImage(size: 96)
-                        Text("すぐ筋トレ").font(.system(size: 11, weight: .medium)).foregroundStyle(green)
+                        Text("すぐ筋トレ").font(pochiPixelFont(11)).foregroundStyle(green)
                     }.frame(width: min(110, geometry.size.width * 0.36))
                     VStack(spacing: 6) {
                         if entry.workouts.isEmpty { emptyStart }
@@ -137,10 +137,10 @@ private struct PochiCompanionWidgetView: View {
                                 HStack(spacing: 7) {
                                     exerciseIcon(preset.iconName).frame(width: 23, height: 23)
                                     VStack(alignment: .leading, spacing: 1) {
-                                        Text(presetTitle(preset)).font(.system(size: 12, weight: .semibold))
+                                        Text(presetTitle(preset)).font(pochiPixelFont(12))
                                             .lineLimit(1).minimumScaleFactor(0.7)
                                         Text(entry.activePresetID == preset.id ? NSLocalizedString("筋トレに戻る", comment: "") : target(preset))
-                                            .font(.system(size: 10)).foregroundStyle(green)
+                                            .font(pochiPixelFont(10)).foregroundStyle(green)
                                     }
                                     Spacer(minLength: 0)
                                     Image(systemName: "play.fill").font(.system(size: 10)).foregroundStyle(green)
@@ -167,7 +167,7 @@ private struct PochiCompanionWidgetView: View {
     }
 
     private var emptyStart: some View {
-        Text("種目を選ぶ").font(.system(size: 13, weight: .semibold))
+        Text("種目を選ぶ").font(pochiPixelFont(13))
             .foregroundStyle(green).frame(maxWidth: .infinity, minHeight: 36)
     }
 

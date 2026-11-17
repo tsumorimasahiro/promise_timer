@@ -38,7 +38,7 @@ func localizedFormat(_ key: String, _ arguments: CVarArg...) -> String {
     String(format: NSLocalizedString(key, comment: ""), locale: .autoupdatingCurrent, arguments: arguments)
 }
 
-fileprivate var localeAwareGregorianCalendar: Calendar {
+var localeAwareGregorianCalendar: Calendar {
     var calendar = Calendar(identifier: .gregorian)
     calendar.locale = .autoupdatingCurrent
     calendar.timeZone = .autoupdatingCurrent
@@ -250,6 +250,7 @@ struct ContentView: View {
     @State private var pendingPostWorkoutPrompt = false
     @State private var showingPremiumPrompt = false
     @State private var bannerEligible = false
+    @AppStorage("pochiLastCompletedWorkout.v1", store: appGroupDefaults) private var lastCompletedWorkout = ""
     @State private var habitPresets: [HabitPreset] = defaultPresets
     @State private var selectedTab = 0
     @State private var selectedPresetID: String = defaultPresets[0].id
@@ -260,6 +261,7 @@ struct ContentView: View {
     @StateObject private var memoryStore = PochiMemoryStore()
     @StateObject private var strengthStore = PochiStrengthStore(defaults: appGroupDefaults)
     @State private var showingMemories = false
+    @State private var workoutSharePhoto: PochiMemory?
     @State private var homeScene: PochiPixelRoomScene?
     @State private var expandedPresetID: String?
     @State private var isFlipped = false
@@ -275,14 +277,8 @@ struct ContentView: View {
     @State private var draftTemplateID: String?
     @State private var showingAddLogSheet = false
     @State private var showingInitialPresetPicker = false
+    @State private var pendingInitialWorkout: HabitPreset?
     @State private var showingPochiProfileEditor = false
-
-    init() {
-        if let font = UIFont(name: "PixelMplus12-Bold", size: 10) {
-            UITabBarItem.appearance().setTitleTextAttributes([.font: font], for: .normal)
-            UITabBarItem.appearance().setTitleTextAttributes([.font: font], for: .selected)
-        }
-    }
 
     private var pochiCollarColor: Color {
         PresetTint(rawValue: pochiCollarTint)?.color ?? PresetTint.peach.color
@@ -304,10 +300,16 @@ struct ContentView: View {
                     worldState: worldState,
                     togetherSession: togetherSession,
                     onStartTogether: startTogether,
+                    onQuickStart: beginTogether,
+                    workoutLogs: logs,
                     onPauseTogether: toggleTogetherPause,
                     onUpdateSession: persistTogether,
                     onFinishTogether: finishTogether,
                     onRecorded: presentPostWorkoutPrompt,
+                    onShareToday: todayWorkoutPhoto == nil ? nil : { selectedLogDate = Date(); displayedMonth = Date(); selectedTab = 1 },
+                    lastCompleted: lastCompletedWorkout.data(using: .utf8).flatMap { try? JSONDecoder().decode(HabitPreset.self, from: $0) },
+                    showNativeAd: bannerEligible && !subscriptionManager.isSubscribed && !isStoreScreenshotSession,
+                    onViewRecords: { selectedTab = 1 },
                     onDiscardTogether: { togetherSessionStorage = ""; pendingWorkoutPhoto = nil },
                     onCustomize: { showingPochiProfileEditor = true },
                     onAdd: openAddPreset,
@@ -389,7 +391,6 @@ struct ContentView: View {
             .tabItem { Label("設定", image: "pochi-tab-settings") }.tag(2)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        bannerAd
         }
         .background(Color.cream)
         .onAppear {
@@ -428,10 +429,14 @@ struct ContentView: View {
             refreshCurrentDate()
         }
         .task(id: didSelectInitialPresets) {
+            let canPrepareAdsThisLaunch = didSelectInitialPresets && reviewActionCount > 0
             await subscriptionManager.start()
             isSubscribed = subscriptionManager.isSubscribed
             appGroupDefaults.set(isSubscribed, forKey: "isSubscribed")
-            guard didSelectInitialPresets, !isSubscribed else { return }
+            // Let a new user complete their first workout before any ad setup.
+            // This task runs on launch/onboarding, so setup starts next launch.
+            guard !Task.isCancelled, canPrepareAdsThisLaunch, !isSubscribed,
+                  !isStoreScreenshotSession else { return }
             await AdPrivacyManager.shared.prepare()
             // Let first-time users choose an exercise and meet Pochi before
             // showing the optional ad-tracking prompt on a later launch.
@@ -480,16 +485,21 @@ struct ContentView: View {
         .sheet(isPresented: $showingPochiProfileEditor) {
             PochiProfileEditor(subscriptionManager: subscriptionManager)
         }
-        .fullScreenCover(isPresented: $showingInitialPresetPicker) {
+        .sheet(item: $workoutSharePhoto) { photo in
+            if let image = memoryStore.image(for: photo) {
+                PochiDailyMemoryShare(photo: image, name: photo.dogName, date: photo.date,
+                    photoID: photo.id, achievements: logs(for: photo.date).map(albumAchievement))
+            }
+        }
+        .fullScreenCover(isPresented: $showingInitialPresetPicker, onDismiss: startInitialWorkout) {
             InitialPresetPickerSheet(
                 presets: initialSelectablePresets,
                 onSelect: { selected in
-                    appGroupDefaults.set(true, forKey: "pochiWorkoutBasics.v2")
-                    habitPresets = selected
-                    selectedPresetID = selected.first?.id ?? ""
-                    persistPresets()
-                    didSelectInitialPresets = true
-                    showingInitialPresetPicker = false
+                    completeInitialSetup(selected)
+                },
+                onQuickStart: { selected, workout in
+                    pendingInitialWorkout = workout
+                    completeInitialSetup(selected)
                 }
             )
             .interactiveDismissDisabled(true)
@@ -550,13 +560,6 @@ struct ContentView: View {
             endPoint: .bottomTrailing
         )
         .ignoresSafeArea()
-    }
-
-    @ViewBuilder
-    private var bannerAd: some View {
-        if !isStoreScreenshotSession && !isSubscribed && didSelectInitialPresets && !showingInitialPresetPicker {
-            PochiBannerAd(canLoad: bannerEligible)
-        }
     }
 
     private var isStoreScreenshotSession: Bool {
@@ -743,15 +746,41 @@ struct ContentView: View {
         guard let data = togetherSessionStorage.data(using: .utf8) else { return nil }
         return try? JSONDecoder().decode(PochiTogetherSession.self, from: data)
     }
+    private var todayWorkoutPhoto: PochiMemory? {
+        guard !memoryStore.saveFailed, !logs(for: currentDate).isEmpty,
+              let photo = memoryStore.representativePhoto(on: currentDate, calendar: calendar),
+              memoryStore.image(for: photo) != nil else { return nil }
+        return photo
+    }
     private func persistTogether(_ session: PochiTogetherSession) {
         guard let data = try? JSONEncoder().encode(session) else { return }
         togetherSessionStorage = String(decoding: data, as: UTF8.self)
+    }
+    private func completeInitialSetup(_ selected: [HabitPreset]) {
+        appGroupDefaults.set(true, forKey: "pochiWorkoutBasics.v2")
+        habitPresets = selected
+        selectedPresetID = selected.first?.id ?? ""
+        persistPresets()
+        didSelectInitialPresets = true
+        showingInitialPresetPicker = false
+    }
+    private func startInitialWorkout() {
+        guard let preset = pendingInitialWorkout else { return }
+        pendingInitialWorkout = nil
+        selectedTab = 0
+        selectedPresetID = preset.id
+        // The short first workout is a session snapshot, not a change to the user's menu.
+        beginTogether(preset)
     }
     private func startTogether(_ preset: HabitPreset) {
         guard togetherSession == nil else { return }
         if let index = habitPresets.firstIndex(where: { $0.id == preset.id }) {
             habitPresets[index] = preset; persistPresets()
         }
+        beginTogether(preset)
+    }
+    private func beginTogether(_ preset: HabitPreset) {
+        guard togetherSession == nil else { return }
         pendingWorkoutPhoto = nil
         persistTogether(PochiTogetherSession(preset: preset))
         PochiWorkoutWidget.remember(preset.id, in: appGroupDefaults)
@@ -768,6 +797,9 @@ struct ContentView: View {
         let now = Date()
         guard save(logs: session.recording(in: logs, at: now, calendar: calendar, values: values,
             recordsDuration: session.preset.workoutPlan.mode == .timed)) else { return false }
+        if let data = try? JSONEncoder().encode(session.preset) {
+            lastCompletedWorkout = String(decoding: data, as: UTF8.self)
+        }
         if let (image, date) = pendingWorkoutPhoto, calendar.isDate(date, inSameDayAs: now) {
             _ = memoryStore.rememberToday(image: image, name: displayPochiName(pochiName), date: date,
                                          replaceExisting: true, workoutPhoto: true)
@@ -858,7 +890,8 @@ struct ContentView: View {
     private func presentPostWorkoutPrompt() {
         guard pendingPostWorkoutPrompt else { return }
         pendingPostWorkoutPrompt = false
-        guard togetherSession == nil, bannerEligible, !isStoreScreenshotSession,
+        // Rating eligibility is independent of ads (including for Premium users).
+        guard togetherSession == nil, !isStoreScreenshotSession,
               !showingPresetEditor, !showingInitialPresetPicker, !showingPochiProfileEditor,
               UIApplication.shared.applicationState == .active else { return }
         var policy = promptPolicy
@@ -898,6 +931,7 @@ struct ContentView: View {
 }
 
 private struct PochiTodayCard: View {
+    @AppStorage("pochiStrengthDays", store: appGroupDefaults) private var strengthDays = 0
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage("pochiCoat", store: appGroupDefaults) private var coatName = PochiCoat.kinako.rawValue
     let pochiName: String
@@ -909,10 +943,16 @@ private struct PochiTodayCard: View {
     let worldState: PochiWorldState
     var togetherSession: PochiTogetherSession? = nil
     var onStartTogether: (HabitPreset) -> Void = { _ in }
+    var onQuickStart: (HabitPreset) -> Void = { _ in }
+    var workoutLogs: [HabitLog] = []
     var onPauseTogether: () -> Void = {}
     var onUpdateSession: (PochiTogetherSession) -> Void = { _ in }
     var onFinishTogether: ([Int]) -> Bool = { _ in false }
     var onRecorded: () -> Void = {}
+    var onShareToday: (() -> Void)? = nil
+    var lastCompleted: HabitPreset? = nil
+    var showNativeAd = false
+    var onViewRecords: () -> Void = {}
     var onDiscardTogether: () -> Void = {}
     let onCustomize: () -> Void
     let onAdd: () -> Void
@@ -964,6 +1004,13 @@ private struct PochiTodayCard: View {
                             ScrollView { sessionPanel(session).padding(.bottom, 8) }
                         } else {
                             WorkoutSelectionPanel(presets: trainingPresets, finished: finished, compact: horizontal,
+                                logs: workoutLogs,
+                                onQuickStart: { finished = false; onQuickStart($0) },
+                                strengthDays: strengthDays,
+                                lastCompleted: lastCompleted,
+                                showNativeAd: showNativeAd,
+                                onViewRecords: onViewRecords,
+                                onShare: onShareToday,
                                 onStart: { finished = false; onStartTogether($0) },
                                 onEdit: onEdit, onAdd: onAdd)
                         }
@@ -999,7 +1046,7 @@ private struct PochiTodayCard: View {
             }
             if session.awaitingNextSet {
                 Text("おつかれさま！記録しよう。")
-                    .font(.headline).multilineTextAlignment(.center)
+                    .font(pochiPixelFont(.headline)).multilineTextAlignment(.center)
             } else {
                 TimelineView(.periodic(from: .now, by: 0.25)) { context in
                     VStack(spacing: 6) {
@@ -1009,7 +1056,7 @@ private struct PochiTodayCard: View {
                         } else {
                             Text(localizedFormat("%lld回", session.preset.workoutPlan.target)).font(pochiPixelFont(36))
                         }
-                        Text(session.isPaused ? "ひとやすみ中" : "いっしょに筋トレ中").font(.caption)
+                        Text(session.isPaused ? "ひとやすみ中" : "いっしょに筋トレ中").font(pochiPixelFont(.caption))
                     }
                 }
             }
@@ -1021,7 +1068,7 @@ private struct PochiTodayCard: View {
                 Button(session.isPaused ? "再開する" : "ひとやすみ", action: onPauseTogether)
                     .frame(minWidth: 90, minHeight: 48)
             }
-            Button("記録せず終了") { confirmingDiscard = true }.font(.caption).frame(minHeight: 44)
+            Button("記録せず終了") { confirmingDiscard = true }.font(pochiPixelFont(.caption)).frame(minHeight: 44)
         }.padding(16).background(Color.pochiSurface, in: RoundedRectangle(cornerRadius: 12))
     }
 }
@@ -1046,7 +1093,7 @@ private struct PochiPhotoSheet: View {
                     }
                 }.padding(20)
             }.background(Color.cream).foregroundStyle(Color.cocoa)
-                .navigationTitle(localizedText("今日のぽち")).navigationBarTitleDisplayMode(.inline)
+                .pochiNavigationTitle(localizedText("今日のぽち")).navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("閉じる") { dismiss() } } }
                 .alert("思い出を保存できませんでした。", isPresented: $saveFailed) {
                     Button("閉じる", role: .cancel) {}
@@ -2394,7 +2441,7 @@ private struct PochiProfileEditor: View {
                             .font(pochiPixelFont(13))
                             .foregroundStyle(Color.cocoa)
                         TextField("ぽち", text: $pochiName)
-                            .font(.system(size: 17, weight: .semibold, design: .rounded))
+                            .font(pochiPixelFont(17))
                             .textFieldStyle(PochiRetroFieldStyle())
                             .overlay(RoundedRectangle(cornerRadius: 7).stroke(Color.cocoa.opacity(0.25), lineWidth: 1))
                             .focused($nameFieldIsFocused)
@@ -2404,7 +2451,7 @@ private struct PochiProfileEditor: View {
                                 }
                             }
                         Text("いつでも変えられるよ")
-                            .font(.system(size: 12, weight: .regular, design: .rounded))
+                            .font(pochiPixelFont(12))
                             .foregroundStyle(Color.cocoa.opacity(0.58))
                     }
 
@@ -2456,10 +2503,10 @@ private struct InstantLogCard: View {
         VStack(spacing: 10) {
             PresetIconView(name: preset.iconName, size: 64, tint: preset.tint)
             Text(localizedPresetTitle(id: preset.id, storedTitle: preset.title))
-                .font(.title3.bold())
+                .font(pochiPixelFont(.title3))
                 .foregroundStyle(Color.cocoa)
             Text("タップで記録")
-                .font(.subheadline)
+                .font(pochiPixelFont(.subheadline))
                 .foregroundStyle(Color.cocoa.opacity(0.65))
         }
         .frame(maxWidth: .infinity)
@@ -2506,7 +2553,7 @@ private struct FlippablePresetCard: View {
                 HStack(spacing: 12) {
                     Button(action: onDone) {
                         Text(isAlreadyDone ? "今日はもうできたよ" : "できた")
-                            .font(.title3.bold())
+                            .font(pochiPixelFont(.title3))
                             .frame(maxWidth: .infinity, minHeight: 50)
                             .background(Color.cream)
                             .foregroundStyle(Color.cocoa)
@@ -2521,7 +2568,7 @@ private struct FlippablePresetCard: View {
 
                     Button(action: onCancel) {
                         Text("やめる")
-                            .font(.body.bold())
+                            .font(pochiPixelFont(.body))
                             .frame(maxWidth: .infinity, minHeight: 50)
                             .background(Color.sky)
                             .foregroundStyle(Color.cocoa)
@@ -2546,7 +2593,7 @@ private struct FlippablePresetCard: View {
         VStack(spacing: 16) {
             PresetIconView(name: preset.iconName, size: 380, tint: preset.tint)
             Text(localizedPresetTitle(id: preset.id, storedTitle: preset.title))
-                .font(.title2.bold())
+                .font(pochiPixelFont(.title2))
                 .foregroundStyle(Color.cocoa)
         }
         .frame(maxWidth: .infinity)
@@ -2562,7 +2609,7 @@ private struct FlippablePresetCard: View {
             .frame(height: 176)
             .clipShape(RoundedRectangle(cornerRadius: 8))
             Text("\(displayPochiName(pochiName))に伝えた！")
-                .font(.title2.bold())
+                .font(pochiPixelFont(.title2))
                 .foregroundStyle(Color.candyBlue)
         }
         .frame(maxWidth: .infinity)
@@ -2620,9 +2667,9 @@ private struct PresetGridView: View {
                             }
                         }
                         Text(localizedPresetTitle(id: preset.id, storedTitle: preset.title))
-                            .font(.title3.bold())
+                            .font(pochiPixelFont(.title3))
                         Text(localizedFormat("今週 %lld / %lld 回", completedThisWeek, preset.weeklyTarget))
-                            .font(.caption.bold())
+                            .font(pochiPixelFont(.caption))
                             .foregroundStyle(completedThisWeek >= preset.weeklyTarget ? Color.grassDark : Color.cocoa.opacity(0.62))
                         Spacer(minLength: 0)
                     }
@@ -2661,9 +2708,9 @@ private struct PresetGridView: View {
                             .font(.system(size: 40, weight: .bold))
                         VStack(spacing: 4) {
                             Text("ついか")
-                                .font(.headline)
+                                .font(pochiPixelFont(.headline))
                             Text("種目名")
-                                .font(.subheadline.bold())
+                                .font(pochiPixelFont(.subheadline))
                         }
                         Spacer(minLength: 0)
                     }
@@ -2732,18 +2779,18 @@ private struct WeeklyDotsCard: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text("今週の足あと")
-                    .font(.subheadline.bold())
+                    .font(pochiPixelFont(.subheadline))
                     .foregroundStyle(Color.cocoa)
                 Spacer()
                 Text("できた日がふえていくよ")
-                    .font(.caption)
+                    .font(pochiPixelFont(.caption))
                     .foregroundStyle(Color.cocoa.opacity(0.58))
             }
 
             HStack(spacing: 6) {
                 ForEach(weekdaySymbols, id: \.self) { label in
                     Text(label)
-                        .font(.caption.bold())
+                        .font(pochiPixelFont(.caption))
                         .foregroundStyle(Color.cocoa.opacity(0.6))
                         .frame(maxWidth: .infinity)
                 }
@@ -2804,7 +2851,7 @@ private struct HabitTemplatePickerSheet: View {
                 }.disabled(existingIDs.contains(preset.id))
                     .listRowBackground(Color.cream)
             }.scrollContentBackground(.hidden).background(Color.cream).foregroundStyle(Color.cocoa)
-                .navigationTitle(localizedText("種目を選ぶ")).navigationBarTitleDisplayMode(.inline)
+                .pochiNavigationTitle(localizedText("種目を選ぶ")).navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button("閉じる") { dismiss() } } }
         }
     }
@@ -2830,6 +2877,7 @@ private struct InitialPresetPickerSheet: View {
 
     let presets: [HabitPreset]
     let onSelect: ([HabitPreset]) -> Void
+    let onQuickStart: ([HabitPreset], HabitPreset) -> Void
 
     private var allPresets: [HabitPreset] { editedBasics + customPresets }
     private var selectedPresets: [HabitPreset] {
@@ -2840,10 +2888,12 @@ private struct InitialPresetPickerSheet: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                progressHeader
-                    .padding(.horizontal, 22)
-                    .padding(.top, 12)
-                    .padding(.bottom, 8)
+                if step != .meet {
+                    progressHeader
+                        .padding(.horizontal, 22)
+                        .padding(.top, 12)
+                        .padding(.bottom, 8)
+                }
 
                 Group {
                     switch step {
@@ -2865,7 +2915,7 @@ private struct InitialPresetPickerSheet: View {
             .sheet(item: $editingBasic) { preset in
                 NavigationStack {
                     Form { WorkoutPlanFields(plan: $onboardingPlan) }
-                        .navigationTitle(preset.title).navigationBarTitleDisplayMode(.inline)
+                        .pochiNavigationTitle(preset.title).navigationBarTitleDisplayMode(.inline)
                         .toolbar { ToolbarItem(placement: .confirmationAction) {
                             Button("保存する") {
                                 if let i = editedBasics.firstIndex(where: { $0.id == preset.id }) { editedBasics[i] = preset.withPlan(onboardingPlan) }
@@ -2904,7 +2954,7 @@ private struct InitialPresetPickerSheet: View {
                         .font(pochiPixelFont(22))
                         .foregroundStyle(Color.cocoa)
                     Text("ひとりだと続かない筋トレも、ぽちと一緒に。")
-                        .font(.subheadline)
+                        .font(pochiPixelFont(.subheadline))
                         .foregroundStyle(Color.cocoa.opacity(0.68))
                 }
 
@@ -2916,9 +2966,10 @@ private struct InitialPresetPickerSheet: View {
                         coat: chosenCoat,
                         activity: roomActivity,
                         activityToken: activityToken,
-                        muscleStageOverride: .puppy
+                        muscleStageOverride: .puppy,
+                        compact: true
                     )
-                    .frame(height: 248)
+                    .frame(height: 200)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .overlay(alignment: .bottomTrailing) {
                         PochiPixelGlyph(kind: .heart, color: Color.peach, size: 20)
@@ -2928,33 +2979,29 @@ private struct InitialPresetPickerSheet: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel(localizedText("ぽちをタップして反応を見る"))
 
-                Button {
-                    roomActivity = .strength
-                    activityToken += 1
-                } label: {
-                    Text("ぽちの筋トレを見てみる").font(pochiPixelFont(14)).frame(minHeight: 44)
-                }
-                Text("おためしなので、記録には残りません").font(pochiPixelFont(12)).foregroundStyle(Color.cocoa.opacity(0.7))
-                Text("回数や時間を決めて、できたら記録。ぽちと一緒に続けよう。")
-                    .font(.subheadline).foregroundStyle(Color.cocoa.opacity(0.8))
+                Text("まずはスクワット5回。終わったら、できた分を記録しよう。")
+                    .font(pochiPixelFont(.subheadline)).foregroundStyle(Color.cocoa)
+                Text("名前・毛色・メニューは、あとからいつでも変えられます。")
+                    .font(pochiPixelFont(.caption)).foregroundStyle(Color.cocoa.opacity(0.68))
 
-
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("なまえ")
-                        .font(pochiPixelFont(14))
-                        .foregroundStyle(Color.cocoa)
-                    TextField("ぽち", text: $pochiName)
-                        .font(.system(size: 18, weight: .semibold, design: .rounded))
-                        .textFieldStyle(PochiRetroFieldStyle())
-                        .overlay(RoundedRectangle(cornerRadius: 7).stroke(Color.cocoa.opacity(0.28), lineWidth: 1.5))
-                        .onChange(of: pochiName) { value in
-                            if value.count > 12 { pochiName = String(value.prefix(12)) }
+                DisclosureGroup {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("なまえ").font(pochiPixelFont(14))
+                        TextField("ぽち", text: $pochiName)
+                            .font(pochiPixelFont(18))
+                            .textFieldStyle(PochiRetroFieldStyle())
+                            .overlay(RoundedRectangle(cornerRadius: 7).stroke(Color.cocoa.opacity(0.28), lineWidth: 1.5))
+                            .onChange(of: pochiName) { value in
+                                if value.count > 12 { pochiName = String(value.prefix(12)) }
+                            }
+                        PochiCoatPicker(breed: .shiba, selection: chosenCoat) { coat in
+                            coatName = coat.rawValue
                         }
+                    }.padding(.top, 12)
+                } label: {
+                    Text("名前と毛色を変える").font(pochiPixelFont(14)).frame(minHeight: 44)
                 }
-
-                PochiCoatPicker(breed: .shiba, selection: chosenCoat) { coat in
-                    coatName = coat.rawValue
-                }
+                .foregroundStyle(Color.cocoa)
 
             }
             .padding(.horizontal, 22)
@@ -2968,14 +3015,14 @@ private struct InitialPresetPickerSheet: View {
             VStack(alignment: .leading, spacing: 14) {
                 Text("基本メニューを準備しました").font(pochiPixelFont(20))
                 Text("そのまま始めても、回数・時間を変えても大丈夫。あとからいつでも編集できます。")
-                    .font(.subheadline)
+                    .font(pochiPixelFont(.subheadline))
                 ForEach(allPresets) { preset in
                     Button { onboardingPlan = preset.workoutPlan; editingBasic = preset } label: {
                         HStack(spacing: 12) {
                             WorkoutIcon(name: preset.iconName, size: 30)
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(localizedPresetTitle(id: preset.id, storedTitle: preset.title)).font(pochiPixelFont(14))
-                                Text(preset.workoutPlan.summary).font(.caption)
+                                Text(preset.workoutPlan.summary).font(pochiPixelFont(.caption))
                             }
                             Spacer(); Image(systemName: "pencil")
                         }.padding(12).frame(maxWidth: .infinity, minHeight: 64)
@@ -2995,7 +3042,7 @@ private struct InitialPresetPickerSheet: View {
                         .font(pochiPixelFont(21))
                         .foregroundStyle(Color.cocoa)
                     Text("今日の筋トレも、ぽちと一緒に。")
-                        .font(.subheadline)
+                        .font(pochiPixelFont(.subheadline))
                         .foregroundStyle(Color.cocoa.opacity(0.68))
                 }
                 PochiRoomView(
@@ -3011,9 +3058,9 @@ private struct InitialPresetPickerSheet: View {
                     activityToken += 1
                 }
                 Text("種目を選んでスタート。時間の種目はセットごとにカウントダウンします。")
-                    .font(.subheadline).multilineTextAlignment(.center)
+                    .font(pochiPixelFont(.subheadline)).multilineTextAlignment(.center)
                 Text("休む日があっても大丈夫。自分のペースで続けよう。")
-                    .font(.caption).foregroundStyle(Color.cocoa.opacity(0.68))
+                    .font(pochiPixelFont(.caption)).foregroundStyle(Color.cocoa.opacity(0.68))
                 VStack(alignment: .leading, spacing: 8) {
                     Text("今日からの筋トレ")
                         .font(pochiPixelFont(14))
@@ -3043,7 +3090,7 @@ private struct InitialPresetPickerSheet: View {
                 .lineLimit(1)
             Spacer()
             Text(preset.workoutPlan.summary)
-                .font(.caption)
+                .font(pochiPixelFont(.caption))
                 .foregroundStyle(Color.cocoa.opacity(0.58))
         }
         .padding(.horizontal, 10)
@@ -3052,25 +3099,36 @@ private struct InitialPresetPickerSheet: View {
     }
 
     private var navigationControls: some View {
-        HStack(spacing: 12) {
-            if step != .meet {
-                PochiOutlineButton(title: localizedText("もどる")) {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        step = step == .ready ? .choose : .meet
-                    }
+        VStack(spacing: 4) {
+            if step == .meet {
+                PochiPrimaryButton(title: localizedText("スクワット5回をはじめる")) {
+                    let selected = PochiWorkoutCatalog.initialSelection(selectedPresets)
+                    onQuickStart(selected, PochiWorkoutCatalog.introductoryWorkout(in: selected))
                 }
-            }
-            PochiPrimaryButton(title: localizedText(step == .ready ? "ぽちと筋トレをはじめる" : "つぎへ")) {
-                switch step {
-                case .meet:
+                .accessibilityHint(localizedText("設定をあとにして、ぽちと一緒にスクワットを始めます"))
+                Button {
                     withAnimation(.easeInOut(duration: 0.2)) { step = .choose }
-                case .choose:
-                    withAnimation(.easeInOut(duration: 0.2)) { step = .ready }
-                case .ready:
-                    onSelect(PochiWorkoutCatalog.initialSelection(selectedPresets))
+                } label: {
+                    Text("メニューを設定してから始める")
+                        .font(pochiPixelFont(13)).frame(maxWidth: .infinity, minHeight: 44)
+                }
+            } else {
+                HStack(spacing: 12) {
+                    PochiOutlineButton(title: localizedText("もどる")) {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            step = step == .ready ? .choose : .meet
+                        }
+                    }
+                    PochiPrimaryButton(title: localizedText(step == .ready ? "ぽちと筋トレをはじめる" : "つぎへ")) {
+                        if step == .ready {
+                            onSelect(PochiWorkoutCatalog.initialSelection(selectedPresets))
+                        } else {
+                            withAnimation(.easeInOut(duration: 0.2)) { step = .ready }
+                        }
+                    }
+                    .accessibilityHint(localizedText(step == .ready ? "選んだ種目を保存して筋トレのホームを開きます" : "次のステップへ進みます"))
                 }
             }
-            .accessibilityHint(localizedText(step == .ready ? "選んだ種目を保存して筋トレのホームを開きます" : "次のステップへ進みます"))
         }
     }
 }
@@ -3114,7 +3172,7 @@ private struct PresetEditorSheet: View {
                             Button { iconName = preset.iconName } label: {
                                 VStack(spacing: 6) {
                                     WorkoutIcon(name: preset.iconName, size: 32)
-                                    Text(preset.title).font(.caption2).lineLimit(2)
+                                    Text(preset.title).font(pochiPixelFont(.caption2)).lineLimit(2)
                                 }.frame(maxWidth: .infinity, minHeight: 72)
                                     .background(iconName == preset.iconName ? Color.mist : Color.clear, in: RoundedRectangle(cornerRadius: 8))
                             }.buttonStyle(.plain).accessibilityAddTraits(iconName == preset.iconName ? .isSelected : [])
@@ -3123,7 +3181,7 @@ private struct PresetEditorSheet: View {
                 }
                 if canDelete { Button("種目を削除", role: .destructive) { confirmingDelete = true } }
             }.scrollContentBackground(.hidden).background(Color.cream)
-                .navigationTitle(canDelete ? "種目を編集" : "自分の種目を追加").navigationBarTitleDisplayMode(.inline)
+                .pochiNavigationTitle(canDelete ? "種目を編集" : "自分の種目を追加").navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button("やめる", action: onCancel) } }
                 .safeAreaInset(edge: .bottom) {
                     PochiPrimaryButton(title: localizedText("保存する"), isEnabled: !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, action: onSave)
@@ -3322,10 +3380,10 @@ private struct AddLogSheet: View {
                 Button { selected = preset } label: {
                     HStack(spacing: 12) {
                         WorkoutIcon(name: preset.iconName)
-                        VStack(alignment: .leading) { Text(preset.title); Text(preset.workoutPlan.summary).font(.caption) }
+                        VStack(alignment: .leading) { Text(preset.title); Text(preset.workoutPlan.summary).font(pochiPixelFont(.caption)) }
                     }.frame(minHeight: 52)
                 }
-            }.navigationTitle("きろくを追加").navigationBarTitleDisplayMode(.inline)
+            }.pochiNavigationTitle("きろくを追加").navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button("やめる", action: onCancel) } }
                 .sheet(item: $selected) { preset in
                     WorkoutResultSheet(preset: preset, values: [preset.workoutPlan.target],
@@ -3371,8 +3429,21 @@ struct PochiAppearanceReviewScreen: View {
                         Button("しっぽ") { trainingPreview?.previewStrengthMove(.proudPose) }
                     }.font(pochiPixelFont(12)).buttonStyle(.bordered)
                 }.padding(20)
+            case "retention":
+                VStack {
+                    PochiRoomView(coat: .kinako, activity: .idle, activityToken: 0, compact: true).frame(height: 150)
+                    WorkoutSelectionPanel(presets: PochiWorkoutCatalog.starterPresets, finished: true,
+                        logs: [HabitLog(presetID: "squats", title: "スクワット", workouts: [WorkoutRecord(id: "preview", plan: WorkoutPlan(), values: [10, 10])])],
+                        strengthDays: 2, onStart: { _ in }, onEdit: { _ in }, onAdd: {})
+                }.padding(16).background(Color.cream)
+            case "native-layout-check":
+                PochiNativeLayoutReview()
+            case "native":
+                ScrollView { PochiNativeAd().padding(16) }.task { await AdPrivacyManager.shared.prepare() }
+            case "reminder":
+                WorkoutReminderSheet()
             case "onboarding":
-                InitialPresetPickerSheet(presets: initialSelectablePresets, onSelect: { _ in })
+                InitialPresetPickerSheet(presets: initialSelectablePresets, onSelect: { _ in }, onQuickStart: { _, _ in })
             case "add":
                 PresetEditorSheet(title: $title, iconName: $icon, plan: $reviewPlan,
                     existingIDs: [], onTemplate: { _ in }, canDelete: false,
@@ -3395,7 +3466,7 @@ struct PochiAppearanceReviewScreen: View {
                         }.padding(16)
                     }
                     .background(Color.cream)
-                    .navigationTitle("きろく")
+                    .pochiNavigationTitle("きろく")
                     .toolbarBackground(Color.cream, for: .navigationBar)
                 }
             default:
@@ -3411,3 +3482,32 @@ struct PochiAppearanceReviewScreen: View {
     }
 }
 #endif
+
+
+/// Purchase previews are isolated from saved profile preferences and entitlements.
+struct PochiPremiumPreview: View {
+    @AppStorage("pochiName", store: appGroupDefaults) private var name = "ぽち"
+    @State private var breed = PochiBreed.dalmatian
+    @State private var activity = PochiRoomActivity.strength
+    @State private var token = 0
+    var body: some View {
+        VStack(spacing: 12) {
+            Text(localizedFormat("%@と、これからも一緒", displayPochiName(name)))
+                .font(pochiPixelFont(16))
+            PochiRoomView(coat: .kinako, activity: activity, activityToken: token,
+                          breedOverride: breed, compact: true)
+                .frame(height: 180)
+            Picker("犬種", selection: $breed) {
+                ForEach(PochiBreed.allCases) { value in
+                    Text(localizedText(value.titleKey)).tag(value)
+                }
+            }.pickerStyle(.segmented)
+            HStack {
+                Button("筋トレ") { activity = .strength; token += 1 }
+                Button("ひとやすみ") { activity = .sleep; token += 1 }
+            }.buttonStyle(.bordered)
+            Text("動きをおためし中です。購入するまで見た目は変わりません。")
+                .font(pochiPixelFont(.caption)).fixedSize(horizontal: false, vertical: true)
+        }
+    }
+}

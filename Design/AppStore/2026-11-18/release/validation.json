@@ -1,0 +1,20 @@
+{
+  "version": "1.07",
+  "build": "70",
+  "sourceHashMatches": 64,
+  "mismatches": [],
+  "checks": {
+    "pixelFontGuard": "PASS",
+    "pixelTypographyTests": "4 PASS",
+    "appStoreWorkflowTests": "31 PASS",
+    "retentionRegression": "PASS",
+    "workoutCatalogRegression": "PASS",
+    "diffWhitespace": "PASS"
+  },
+  "existingBuildEvidence": {
+    "archiveIdentity": "Design/NativeAdBoundsReview/build-70.json",
+    "nativeAdLayout": "Design/NativeAdBoundsReview/layout-regression.json",
+    "smallDeviceTypography": "Design/PixelFontReview/README.md"
+  },
+  "simulatorStartedForSubmission": false
+}

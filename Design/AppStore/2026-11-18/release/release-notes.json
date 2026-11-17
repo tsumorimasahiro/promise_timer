@@ -1,0 +1,17 @@
+{
+  "ja": {
+    "whatsNew": "・次のぽちの成長までの日数と進み具合を表示します。\n・前回と同じ筋トレや、軽めの筋トレをすぐに始められます。\n・今週の実施日数と回数・時間を振り返れます。\n・好きな曜日と時刻に週1回の通知を設定できます。\n・プレミアム画面で犬種と動きをお試しいただけます。\n・ホーム画面を整理し、文字の見た目をドットフォントに統一しました。\n・広告の表示レイアウトを改善しました。"
+  },
+  "en-US": {
+    "whatsNew": "See progress toward Pochi’s next growth milestone. Repeat your last workout or choose a lighter session. Review your weekly training days, reps and time. Set an optional weekly reminder. Preview breeds and animations on the Premium screen. The home screen is now simpler, with consistent pixel-style text. Improved ad layout."
+  },
+  "ko": {
+    "whatsNew": "포치의 다음 성장까지 남은 날과 진행 상황을 확인하세요. 지난 운동이나 가벼운 운동을 바로 시작하고, 이번 주 운동 일수와 횟수·시간을 돌아볼 수 있어요. 원하는 요일과 시간에 주 1회 알림을 설정하고 프리미엄 화면에서 견종과 움직임을 미리 볼 수 있어요. 홈 화면을 정리하고 글꼴을 도트 스타일로 통일했어요. 광고 표시 레이아웃도 개선했어요."
+  },
+  "zh-Hans": {
+    "whatsNew": "查看波奇距离下一阶段成长的天数和进度。快速重复上次训练或选择轻松训练，回顾本周训练天数、次数与时间。可设置每周提醒，并在高级版页面预览犬种和动作。 重新整理首页，并统一像素风格字体。优化了广告显示布局。"
+  },
+  "zh-Hant": {
+    "whatsNew": "查看波奇距離下一階段成長的天數和進度。快速重複上次訓練或選擇輕鬆訓練，回顧本週訓練天數、次數與時間。可設定每週提醒，並在進階版頁面預覽犬種和動作。 重新整理首頁，並統一像素風格字體。最佳化了廣告顯示版面。"
+  }
+}

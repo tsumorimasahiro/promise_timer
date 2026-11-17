@@ -1,0 +1,33 @@
+{
+  "status": "PREPARED",
+  "appId": "6760613210",
+  "bundleId": "max.promise-timer",
+  "platform": "IOS",
+  "version": "1.07",
+  "versionId": "7fa882a8-2061-4520-8d12-8efe11948011",
+  "build": "70",
+  "buildId": "5c94b029-4d19-427c-8c49-35972f09f1ba",
+  "versionState": "PREPARE_FOR_SUBMISSION",
+  "releaseType": "AFTER_APPROVAL",
+  "metadataSHA256": "02d014d3025f444797b20dbb8adee8ba2ef454f6749a582535d86f895ab44d7e",
+  "localeChanges": {
+    "en-US": [
+      "whatsNew"
+    ],
+    "ja": [
+      "whatsNew"
+    ],
+    "zh-Hant": [
+      "whatsNew"
+    ],
+    "ko": [
+      "whatsNew"
+    ],
+    "zh-Hans": [
+      "whatsNew"
+    ]
+  },
+  "keywordsUpdated": false,
+  "encryptionDeclarationMissing": false,
+  "submitted": false
+}

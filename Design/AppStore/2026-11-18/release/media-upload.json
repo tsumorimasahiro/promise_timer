@@ -1,0 +1,92 @@
+{
+  "complete": true,
+  "app_id": "6760613210",
+  "version": "1.07",
+  "version_id": "7fa882a8-2061-4520-8d12-8efe11948011",
+  "library_id": "6760613210",
+  "placement_group": "IPHONE_DYNAMIC_ISLAND_LARGE_PROFILE",
+  "locale_ids": {
+    "ja": "6fb01941-45f2-4297-8595-f6220a18ad88"
+  },
+  "limits": {
+    "APP_SCREENSHOT": 10
+  },
+  "version_state": "PREPARE_FOR_SUBMISSION",
+  "assets": [
+    {
+      "id": "ecc00019-2f6c-855a-8035-887eaa27077c",
+      "type": "appAssetLibraryImages",
+      "sha256": "a1da5a94820a6b925198d2a256dbed96c920265e1bb147904eaf592306c401da",
+      "locale": "ja",
+      "placement_type": "APP_SCREENSHOT",
+      "state": "PREPARE_FOR_SUBMISSION"
+    },
+    {
+      "id": "12000019-2f6c-855a-8025-b6c1c92e972d",
+      "type": "appAssetLibraryImages",
+      "sha256": "bfada5f60d54f0a8780f24febc74ebccf279f5f7a55dd810e66dd8332d108fe4",
+      "locale": "ja",
+      "placement_type": "APP_SCREENSHOT",
+      "state": "PREPARE_FOR_SUBMISSION"
+    },
+    {
+      "id": "13c00019-2f6c-855a-801e-f671fe46918a",
+      "type": "appAssetLibraryImages",
+      "sha256": "ffd9a09899e82155697be7e6c914f57323f49285a850d56261cf0d00ca140ea6",
+      "locale": "ja",
+      "placement_type": "APP_SCREENSHOT",
+      "state": "PREPARE_FOR_SUBMISSION"
+    },
+    {
+      "id": "cc000019-2f6c-855a-801b-748776706bba",
+      "type": "appAssetLibraryImages",
+      "sha256": "95a40759025ef8b8fd147fa92fa613153dc2cbb3962f09d703dd1c1c83fbb923",
+      "locale": "ja",
+      "placement_type": "APP_SCREENSHOT",
+      "state": "PREPARE_FOR_SUBMISSION"
+    },
+    {
+      "id": "5c800019-2f6c-855a-8028-6fb19765b819",
+      "type": "appAssetLibraryImages",
+      "sha256": "0c5bdd0448e9c9c575323ced432f1c7a94b57fe7e0e289de33ced2fbf971aafa",
+      "locale": "ja",
+      "placement_type": "APP_SCREENSHOT",
+      "state": "PREPARE_FOR_SUBMISSION"
+    }
+  ],
+  "placements": [
+    {
+      "id": "44c00019-2f6c-855a-8f02-309694acff08",
+      "locale_id": "6fb01941-45f2-4297-8595-f6220a18ad88",
+      "placement_group": "IPHONE_DYNAMIC_ISLAND_LARGE_PROFILE",
+      "asset_id": "ecc00019-2f6c-855a-8035-887eaa27077c"
+    },
+    {
+      "id": "75400019-2f6c-855a-8f0a-04d8c046e66b",
+      "locale_id": "6fb01941-45f2-4297-8595-f6220a18ad88",
+      "placement_group": "IPHONE_DYNAMIC_ISLAND_LARGE_PROFILE",
+      "asset_id": "12000019-2f6c-855a-8025-b6c1c92e972d"
+    },
+    {
+      "id": "cf800019-2f6c-855a-8f31-10eaf3cca2b5",
+      "locale_id": "6fb01941-45f2-4297-8595-f6220a18ad88",
+      "placement_group": "IPHONE_DYNAMIC_ISLAND_LARGE_PROFILE",
+      "asset_id": "13c00019-2f6c-855a-801e-f671fe46918a"
+    },
+    {
+      "id": "49000019-2f6c-855a-8f1a-ed4e7410e5ab",
+      "locale_id": "6fb01941-45f2-4297-8595-f6220a18ad88",
+      "placement_group": "IPHONE_DYNAMIC_ISLAND_LARGE_PROFILE",
+      "asset_id": "cc000019-2f6c-855a-801b-748776706bba"
+    },
+    {
+      "id": "ae000019-2f6c-855a-8f09-9965fdeed7df",
+      "locale_id": "6fb01941-45f2-4297-8595-f6220a18ad88",
+      "placement_group": "IPHONE_DYNAMIC_ISLAND_LARGE_PROFILE",
+      "asset_id": "5c800019-2f6c-855a-8028-6fb19765b819"
+    }
+  ],
+  "extra_items": [],
+  "review_note": "Screenshot and preview placements are reviewed with their App Store version; submit the parent version.",
+  "state_file": "/Users/tsumori/promise_timer/.build/asc-media/6760613210-1.07.json"
+}

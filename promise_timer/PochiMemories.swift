@@ -242,7 +242,7 @@ struct PochiMemoryAlbum: View {
                     }
                 }.padding(20)
             }.background(Color.cream).foregroundStyle(Color.cocoa)
-                .navigationTitle(localizedText("ぽちの思い出")).navigationBarTitleDisplayMode(.inline)
+                .pochiNavigationTitle(localizedText("ぽちの思い出")).navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button("閉じる") { dismiss() } } }
                 .sheet(isPresented: Binding(get: { sharingDate != nil }, set: { if !$0 { sharingDate = nil } })) {
                     if let date = sharingDate, let day = days.first(where: { $0.date == date }),
@@ -277,15 +277,20 @@ struct PochiDailyMemoryShare: View {
     let achievements: [PochiAlbumAchievement]
     @Environment(\.dismiss) private var dismiss
     @State private var includeAchievements = false
+    @State private var includeAppMessage = true
     @State private var rendered: UIImage?
     @State private var renderedKey = ""
+    @State private var sharing: PochiMemorySharePayload?
+    private var shareMessage: String {
+        localizedText("ぽちと筋トレできた！") + "\n" + localizedText("ぽちログ")
+    }
     private var renderKey: String {
         "\(includeAchievements)-\(photoID)-\(name)-\(date.timeIntervalSince1970)-" + achievements.map { $0.id + $0.title }.joined(separator: "|")
     }
     private var card: some View {
         VStack(spacing: 12) {
             Text(name).font(pochiPixelFont(20))
-            Image(uiImage: photo).resizable().interpolation(.none).scaledToFit().frame(width: 264, height: 352)
+            Image(uiImage: photo).resizable().interpolation(.none).scaledToFit().frame(width: 264)
             Text(date, format: .dateTime.year().month().day()).font(pochiPixelFont(13))
             if includeAchievements {
                 Text("今日の筋トレ").font(pochiPixelFont(16))
@@ -305,7 +310,20 @@ struct PochiDailyMemoryShare: View {
                     Toggle("できたことも写真に入れる", isOn: $includeAchievements).font(pochiPixelFont(14))
                     if let rendered, renderedKey == renderKey {
                         Image(uiImage: rendered).resizable().interpolation(.none).scaledToFit()
-                        ShareLink(item: Image(uiImage: rendered), preview: SharePreview(name, image: Image(uiImage: rendered))) {
+                        Toggle("アプリの紹介文とリンクを添える", isOn: $includeAppMessage)
+                            .font(pochiPixelFont(14))
+                        if includeAppMessage {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(shareMessage).font(pochiPixelFont(13))
+                                Text(PochiMemorySharePayload.appStoreURL.absoluteString)
+                                    .font(pochiPixelFont(.caption)).foregroundStyle(Color.grassDark)
+                            }.frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(12).background(Color.mist, in: RoundedRectangle(cornerRadius: 8))
+                        }
+                        Button {
+                            sharing = PochiMemorySharePayload(image: rendered,
+                                message: includeAppMessage ? shareMessage : nil)
+                        } label: {
                             HStack { PochiPixelGlyph(kind: .share); Text("写真をシェア") }.frame(minHeight: 44)
                         }
                     } else if renderedKey == renderKey {
@@ -315,8 +333,11 @@ struct PochiDailyMemoryShare: View {
                     }
                 }.padding(20)
             }.background(Color.cream)
-                .navigationTitle(localizedText("写真をシェア")).navigationBarTitleDisplayMode(.inline)
+                .pochiNavigationTitle(localizedText("写真をシェア")).navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button("閉じる") { dismiss() } } }
+                .sheet(item: $sharing) { payload in
+                    PochiMemoryActivitySheet(payload: payload) { sharing = nil }
+                }
                 .task(id: renderKey) {
                     rendered = nil
                     let renderer = ImageRenderer(content: card)
@@ -326,4 +347,30 @@ struct PochiDailyMemoryShare: View {
                 }
         }
     }
+}
+
+/// A snapshot keeps the image and its optional invitation stable while a share extension opens.
+private struct PochiMemorySharePayload: Identifiable {
+    static let appStoreURL = URL(string: "https://apps.apple.com/app/id6760613210")!
+    let id = UUID()
+    let image: UIImage
+    let message: String?
+
+    var activityItems: [Any] {
+        guard let message else { return [image] }
+        return [image, message, Self.appStoreURL]
+    }
+}
+
+private struct PochiMemoryActivitySheet: UIViewControllerRepresentable {
+    let payload: PochiMemorySharePayload
+    let onComplete: () -> Void
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        let controller = UIActivityViewController(activityItems: payload.activityItems, applicationActivities: nil)
+        controller.completionWithItemsHandler = { _, _, _, _ in onComplete() }
+        return controller
+    }
+
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }

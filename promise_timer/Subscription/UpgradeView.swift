@@ -10,6 +10,7 @@ struct UpgradeView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 Text("ぽちログ プレミアム").font(pochiPixelFont(22))
+                PochiPremiumPreview()
                 Text("一度の購入で、全部入り。自動更新はありません。")
                     .font(pochiPixelFont(14)).fixedSize(horizontal: false, vertical: true)
                 VStack(alignment: .leading, spacing: 14) {

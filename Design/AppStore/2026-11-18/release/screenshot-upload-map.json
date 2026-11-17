@@ -1,0 +1,27 @@
+[
+  {
+    "source": "Design/AppStore/2026-11-18/ja/01-companion.png",
+    "uploadName": "01-hero.png",
+    "sha256": "a1da5a94820a6b925198d2a256dbed96c920265e1bb147904eaf592306c401da"
+  },
+  {
+    "source": "Design/AppStore/2026-11-18/ja/02-five-reps.png",
+    "uploadName": "02-timer.png",
+    "sha256": "bfada5f60d54f0a8780f24febc74ebccf279f5f7a55dd810e66dd8332d108fe4"
+  },
+  {
+    "source": "Design/AppStore/2026-11-18/ja/03-calendar.png",
+    "uploadName": "03-calendar.png",
+    "sha256": "ffd9a09899e82155697be7e6c914f57323f49285a850d56261cf0d00ca140ea6"
+  },
+  {
+    "source": "Design/AppStore/2026-11-18/ja/04-your-pochi.png",
+    "uploadName": "04-share.png",
+    "sha256": "95a40759025ef8b8fd147fa92fa613153dc2cbb3962f09d703dd1c1c83fbb923"
+  },
+  {
+    "source": "Design/AppStore/2026-11-18/ja/05-your-pace.png",
+    "uploadName": "05-profile.png",
+    "sha256": "0c5bdd0448e9c9c575323ced432f1c7a94b57fe7e0e289de33ced2fbf971aafa"
+  }
+]

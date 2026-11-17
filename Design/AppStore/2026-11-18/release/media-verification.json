@@ -1,0 +1,70 @@
+{
+  "appId": "6760613210",
+  "version": "1.07",
+  "build": "70",
+  "screenshots": [
+    {
+      "source": "Design/AppStore/2026-11-18/ja/01-companion.png",
+      "sha256": "a1da5a94820a6b925198d2a256dbed96c920265e1bb147904eaf592306c401da",
+      "imageId": "ecc00019-2f6c-855a-8035-887eaa27077c",
+      "placementId": "44c00019-2f6c-855a-8f02-309694acff08",
+      "placementState": "ACTIVE",
+      "assetState": "PREPARE_FOR_SUBMISSION"
+    },
+    {
+      "source": "Design/AppStore/2026-11-18/ja/02-five-reps.png",
+      "sha256": "bfada5f60d54f0a8780f24febc74ebccf279f5f7a55dd810e66dd8332d108fe4",
+      "imageId": "12000019-2f6c-855a-8025-b6c1c92e972d",
+      "placementId": "75400019-2f6c-855a-8f0a-04d8c046e66b",
+      "placementState": "ACTIVE",
+      "assetState": "PREPARE_FOR_SUBMISSION"
+    },
+    {
+      "source": "Design/AppStore/2026-11-18/ja/03-calendar.png",
+      "sha256": "ffd9a09899e82155697be7e6c914f57323f49285a850d56261cf0d00ca140ea6",
+      "imageId": "13c00019-2f6c-855a-801e-f671fe46918a",
+      "placementId": "cf800019-2f6c-855a-8f31-10eaf3cca2b5",
+      "placementState": "ACTIVE",
+      "assetState": "PREPARE_FOR_SUBMISSION"
+    },
+    {
+      "source": "Design/AppStore/2026-11-18/ja/04-your-pochi.png",
+      "sha256": "95a40759025ef8b8fd147fa92fa613153dc2cbb3962f09d703dd1c1c83fbb923",
+      "imageId": "cc000019-2f6c-855a-801b-748776706bba",
+      "placementId": "49000019-2f6c-855a-8f1a-ed4e7410e5ab",
+      "placementState": "ACTIVE",
+      "assetState": "PREPARE_FOR_SUBMISSION"
+    },
+    {
+      "source": "Design/AppStore/2026-11-18/ja/05-your-pace.png",
+      "sha256": "0c5bdd0448e9c9c575323ced432f1c7a94b57fe7e0e289de33ced2fbf971aafa",
+      "imageId": "5c800019-2f6c-855a-8028-6fb19765b819",
+      "placementId": "ae000019-2f6c-855a-8f09-9965fdeed7df",
+      "placementState": "ACTIVE",
+      "assetState": "PREPARE_FOR_SUBMISSION"
+    }
+  ],
+  "locales": {
+    "ja": {
+      "placementCount": 12,
+      "untargetedMediaPreserved": true
+    },
+    "zh-Hans": {
+      "placementCount": 6,
+      "untargetedMediaPreserved": true
+    },
+    "en-US": {
+      "placementCount": 6,
+      "untargetedMediaPreserved": true
+    },
+    "zh-Hant": {
+      "placementCount": 6,
+      "untargetedMediaPreserved": true
+    },
+    "ko": {
+      "placementCount": 6,
+      "untargetedMediaPreserved": true
+    }
+  },
+  "ready": true
+}

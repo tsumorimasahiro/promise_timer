@@ -9,3 +9,5 @@ xcuserdata/
 *.xcuserstate
 ReviewBuild/*.zip
 __pycache__/
+.asc-private/
+*.p8

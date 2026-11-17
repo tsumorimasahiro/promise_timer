@@ -1,0 +1,11 @@
+# Pixel typography — 2026-11-17–18
+
+Unifies app-owned text with the existing bundled PixelMplus12-Bold font, including home summaries, workout entry, onboarding, settings details, records, input fields, native-ad assets and widget labels. `PochiTypography.swift` is shared by app and widget, preserves semantic text sizes and Dynamic Type scaling, and provides UIKit equivalents. The app root supplies a default font for previously implicit SwiftUI labels. Explicit navigation titles avoid SwiftUI replacing UIKit title appearance; long titles fit on one line.
+
+SF Symbol sizing remains system-based because these are icons, not text. iOS-owned surfaces (status bar, keyboard, permission/purchase dialogs, share sheet), SDK-owned overlays and letters absent from the bundled font retain platform fallback. No records, purchases, reminders, advertising units or workout logic were changed.
+
+Validation uses the real app views through existing DEBUG review routes on a dedicated iPhone SE. These routes use sample data and are not an end-to-end purchase test. Native test-ad validator reports “No implementation issues found”. Settings were also captured at the extra-extra-extra-large Dynamic Type size. Widget target is built with the same font helper; no Home Screen widget screenshot was captured. The simulator runner owns only the device recorded in `simulator.json` and shuts it down after each capture session.
+
+Final Debug simulator build and signed Release archive passed without compiler warnings/errors. Home heading insets were adjusted after screenshot review found clipped leading glyphs. One capture session timed out while terminating the app; the shared runner shut down only the owned simulator, and the next capture completed successfully with normal shutdown.
+
+Delivered as **1.07 (69)** to owner-only internal TestFlight on 2026-11-18 (JST). Apple confirmed `VALID`, one owner tester, no public link and `IN_BETA_TESTING`; see `testflight-69.json`, `encryption-69.json`, and `build-69.json`. No production App Review submission. Upload succeeded with the existing third-party GoogleMobileAds/UserMessagingPlatform missing-dSYM warnings. The first distribution attempt encountered a transient build-not-found response during Apple replication; the guarded retry read back the existing state and confirmed successful distribution.

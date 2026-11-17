@@ -1,7 +1,20 @@
 import SwiftUI
 
-func pochiPixelFont(_ size: CGFloat) -> Font {
-    .custom("PixelMplus12-Bold", size: size, relativeTo: .body)
+extension View {
+    /// SwiftUI can replace UINavigationBar appearance when it configures a screen.
+    /// An explicit title keeps the bundled font and fits long Japanese headings.
+    func pochiNavigationTitle(_ title: String) -> some View {
+        navigationTitle(localizedText(title))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text(localizedText(title))
+                        .font(pochiPixelFont(.headline))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.65)
+                }
+            }
+    }
 }
 
 enum PochiPixelIconKind {

@@ -1,0 +1,12 @@
+Version 1.07 (70) improves the home screen, workout continuity, typography, and native ad layout. The five Japanese iPhone screenshots have been redesigned with a pale sky background and real in-app screens. The calendar screenshot uses clearly labeled sample records.
+
+No sign-in or account is required. Core workouts and logging work without purchasing Premium. Existing non-consumable Premium product promise_timer.premium.lifetime is unchanged; it removes ads and unlocks Dalmatian and Pomeranian breeds. Restore Purchases remains available in Settings.
+
+Suggested review steps:
+1. On a fresh installation, start the introductory five-squat workout. Repetitions are saved manually; camera/sensor counting is not used.
+2. Finish and save a workout. On Home, repeat the previous workout or choose the lighter workout option. Review weekly workout days, repetitions and time, and progress toward the next dog growth milestone.
+3. Open Settings to configure the optional weekly reminder. Notification permission is requested only when needed. No notification permission is required to use workouts.
+4. Open Premium to preview breeds and animations. Previewing does not initiate a purchase.
+5. Check the home screen and workout controls at larger system text sizes. All app-owned text uses the bundled pixel font, and native ad assets remain inside their container.
+
+Workout settings and records are stored locally and shared with the widget through an App Group. Existing records and Premium entitlements are retained. The app does not use HealthKit or access the camera or microphone. Dog animations are a companion experience, not instruction on human exercise form. Google AdMob native ads appear in the free app with the existing consent and tracking-permission flow. Declining optional tracking does not prevent workouts or logging.

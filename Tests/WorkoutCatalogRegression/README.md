@@ -7,4 +7,4 @@ xcrun swiftc -module-cache-path .build/ModelTestCache promise_timer/HabitModels.
 .build/workout-catalog-regression
 ```
 
-Covers training-only starter choices, empty-selection fallback, preservation of selected exercises, custom exercise identity after persistence, growth from custom logs without presets, and preservation/exclusion of legacy non-training records. No user data is read or written.
+Covers training-only starter choices, empty-selection fallback, preservation of selected exercises, a five-rep first-workout snapshot that preserves saved/default targets, custom exercise identity after persistence, growth from custom logs without presets, and preservation/exclusion of legacy non-training records. No user data is read or written.
